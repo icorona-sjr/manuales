@@ -18,7 +18,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
 
-  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; position: sticky; top: 0; z-index: 100; }
   .header-bar .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
   .header-bar .titulo { font-size: 15px; font-weight: 600; color: #fff; }
   .header-bar .sep { color: rgba(255,255,255,0.4); }
@@ -286,7 +286,7 @@
 
   <div class="footer">
     <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
-    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+    <span><a href="icm-historial-revisiones.html" style="color:var(--naranja); text-decoration:none; font-weight:600;">Rev. 12</a> · 09 de jun. de 2026</span>
   </div>
 
 <div class="nav-footer">
