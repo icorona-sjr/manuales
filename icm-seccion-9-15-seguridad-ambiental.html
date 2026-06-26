@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9.15 Seguridad y Ambiental para Proveedores — ICM</title>
+<style>
+  :root {
+    --naranja: #D85A20; --naranja-suave: #FDF0EA; --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A; --gris-medio: #5F5E5A; --gris-suave: #F1EFE8; --gris-borde: #D3D1C7;
+    --verde: #3B6D11; --verde-suave: #EAF3DE; --verde-borde: #C0DD97;
+    --rojo: #A32D2D; --rojo-suave: #FCEBEB; --rojo-borde: #F7C1C1;
+    --amarillo: #854F0B; --amarillo-suave: #FAEEDA; --amarillo-borde: #FAC775;
+    --azul: #185FA5; --azul-suave: #E6F1FB; --azul-borde: #85B7EB;
+    --radius: 8px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
+
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+  .titulo-h { font-size: 15px; font-weight: 600; color: #fff; }
+  .sep { color: rgba(255,255,255,0.4); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .proc-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--gris-borde); }
+  .proc-icono { width: 52px; height: 52px; border-radius: 12px; background: var(--verde-suave); border: 1px solid var(--verde-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; }
+  .proc-titulo { font-size: 22px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .proc-sub { font-size: 14px; color: var(--gris-medio); }
+  .proc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .section { margin-bottom: 28px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--naranja); margin-bottom: 12px; }
+  .divider { height: 1px; background: var(--gris-borde); margin: 28px 0; }
+
+  .info { background: var(--azul-suave); border: 1px solid var(--azul-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--azul); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+  .warn { background: var(--amarillo-suave); border: 1px solid var(--amarillo-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--amarillo); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+  .danger { background: var(--rojo-suave); border: 1px solid var(--rojo-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--rojo); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+
+  .steps { display: flex; flex-direction: column; }
+  .step { display: flex; gap: 16px; }
+  .step-left { display: flex; flex-direction: column; align-items: center; }
+  .step-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--naranja-suave); border: 2px solid var(--naranja); color: var(--naranja); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-line { width: 2px; flex: 1; background: var(--gris-borde); margin: 4px 0; min-height: 12px; }
+  .step:last-child .step-line { display: none; }
+  .step-body { padding-bottom: 20px; flex: 1; padding-top: 4px; }
+  .step-titulo { font-size: 15px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .step-desc { font-size: 14px; color: var(--gris-medio); line-height: 1.6; }
+
+  .epp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .epp-card { background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px; display: flex; gap: 12px; align-items: flex-start; }
+  .epp-icono { font-size: 22px; flex-shrink: 0; }
+  .epp-titulo { font-size: 14px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 4px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .epp-desc { font-size: 13px; color: var(--gris-medio); line-height: 1.45; }
+  .tag-ob { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--rojo-suave); color: var(--rojo); border: 1px solid var(--rojo-borde); }
+  .tag-ap { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--amarillo-suave); color: var(--amarillo); border: 1px solid var(--amarillo-borde); }
+
+  .prohib-list { display: flex; flex-direction: column; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; }
+  .prohib-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--gris-borde); font-size: 14px; color: var(--gris-medio); }
+  .prohib-row:last-child { border-bottom: none; }
+  .prohib-icon { font-size: 18px; flex-shrink: 0; color: var(--rojo); }
+
+  .checklist { display: flex; flex-direction: column; gap: 10px; }
+  .check-item { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--gris-oscuro); }
+  .check-circle { width: 24px; height: 24px; border-radius: 50%; background: var(--verde-suave); border: 1.5px solid var(--verde-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--verde); font-size: 13px; font-weight: 700; }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; font-size: 12px; color: var(--gris-medio); flex-wrap: wrap; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .proc-icono { display: none; }
+    .epp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <span class="codigo">MCM-01-G</span>
+  <span class="sep">›</span>
+  <span class="titulo-h">9.15 Seguridad y Ambiental para Proveedores</span>
+</div>
+
+<div class="container">
+
+  <div class="proc-header">
+    <div class="proc-icono">🛡️</div>
+    <div>
+      <div class="proc-titulo">9.15 Seguridad y ambiental para proveedores y contratistas</div>
+      <div class="proc-sub">Lineamientos obligatorios para ingresar y permanecer en las instalaciones de ICM</div>
+      <div class="proc-meta">
+        <span class="badge">Seg. Higiene y MA</span>
+        <span class="badge">Compras ICM</span>
+        <span class="badge">Aplica a toda visita o entrega</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Proceso de ingreso a instalaciones</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Recibe los lineamientos antes de tu visita</div>
+          <div class="step-desc">El Usuario, Compras y/o Seguridad e Higiene enviarán los lineamientos por correo electrónico antes de tu llegada a las instalaciones de ICM.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Pasa por el filtro de ingreso</div>
+          <div class="step-desc">Al llegar debes pasar por el filtro que incluye: medición de temperatura corporal, colocación de gel antibacterial y paso por el tapete sanitizante de calzado.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Regístrate en la bitácora de visitantes</div>
+          <div class="step-desc">Una vez pasado el filtro de ingreso, el guardia en turno te indicará cómo registrarte. Este registro es obligatorio para toda persona que ingrese a las instalaciones.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Presenta identificación oficial vigente</div>
+          <div class="step-desc">Es requisito obligatorio presentar identificación oficial al registrarte en vigilancia. A cambio recibirás un gafete de visitante que debes portar de forma visible y permanente durante toda tu estancia.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">5</div></div>
+        <div class="step-body">
+          <div class="step-titulo">Porta el EPP mínimo requerido</div>
+          <div class="step-desc">Desde el registro en vigilancia debes usar el equipo de protección personal obligatorio. Consulta la lista completa en la siguiente sección.</div>
+        </div>
+      </div>
+    </div>
+    <div class="info">🔧 Si tu visita requiere trabajos especiales (alturas, eléctricos u otros), debes presentar previamente tu alta ante el IMSS con comprobante de pago y constancias de habilidades que acrediten tu capacidad para las actividades a realizar.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Equipo de protección personal (EPP) requerido</div>
+    <div class="epp-grid">
+      <div class="epp-card">
+        <span class="epp-icono">👟</span>
+        <div>
+          <div class="epp-titulo">Zapatos de seguridad <span class="tag-ob">Obligatorio</span></div>
+          <div class="epp-desc">Con punta de acero. Prohibido el uso de tacones, sandalias o cualquier calzado abierto.</div>
+        </div>
+      </div>
+      <div class="epp-card">
+        <span class="epp-icono">🥽</span>
+        <div>
+          <div class="epp-titulo">Lentes de seguridad <span class="tag-ob">Obligatorio</span></div>
+          <div class="epp-desc">Lentes o googles de seguridad durante toda la estancia en planta productiva.</div>
+        </div>
+      </div>
+      <div class="epp-card">
+        <span class="epp-icono">🦺</span>
+        <div>
+          <div class="epp-titulo">Chaleco reflejante <span class="tag-ob">Obligatorio</span></div>
+          <div class="epp-desc">Debe portarse de manera visible en todo momento dentro de las instalaciones.</div>
+        </div>
+      </div>
+      <div class="epp-card">
+        <span class="epp-icono">⛑️</span>
+        <div>
+          <div class="epp-titulo">EPP adicional <span class="tag-ap">Si aplica</span></div>
+          <div class="epp-desc">Dependiendo de las actividades a desempeñar, puede requerirse equipo de protección adicional específico.</div>
+        </div>
+      </div>
+    </div>
+    <div class="warn">⚠️ Todo el EPP debe estar en buenas condiciones. Si ingresas con herramienta, laptop u otro equipo adicional, debes declararlo al registrarte en vigilancia.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Prohibido en el área productiva</div>
+    <div class="prohib-list">
+      <div class="prohib-row"><span class="prohib-icon">✗</span> Aretes, pulseras, reloj y anillos</div>
+      <div class="prohib-row"><span class="prohib-icon">✗</span> Cabello suelto</div>
+      <div class="prohib-row"><span class="prohib-icon">✗</span> Zapatos de tacón, sandalias o calzado abierto</div>
+      <div class="prohib-row"><span class="prohib-icon">✗</span> Ingresar con síntomas de enfermedad — no presentarse si hay síntomas leves para evitar la propagación</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Durante tu estancia en ICM</div>
+    <div class="checklist">
+      <div class="check-item"><div class="check-circle">✓</div> Mantener el orden, limpieza y seguridad en todo momento</div>
+      <div class="check-item"><div class="check-circle">✓</div> Respetar señalizaciones, áreas delimitadas y restricciones de acceso</div>
+      <div class="check-item"><div class="check-circle">✓</div> En caso de emergencia: mantener la calma y seguir las indicaciones de los brigadistas de planta</div>
+      <div class="check-item"><div class="check-circle">✓</div> En caso de emergencia: dirigirse de forma rápida y ordenada al punto de reunión designado</div>
+    </div>
+    <div class="danger">📩 Observaciones o sugerencias sobre las medidas de seguridad: <strong>a.alva@icorona.mx</strong></div>
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+  </div>
+
+</div>
+</body>
+</html>
