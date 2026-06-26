@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Historial de revisiones — MCM-01-G</title>
+<style>
+  :root {
+    --naranja: #D85A20; --naranja-suave: #FDF0EA; --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A; --gris-medio: #5F5E5A; --gris-suave: #F1EFE8; --gris-borde: #D3D1C7;
+    --verde: #3B6D11; --verde-suave: #EAF3DE; --verde-borde: #C0DD97;
+    --azul: #185FA5; --azul-suave: #E6F1FB; --azul-borde: #85B7EB;
+    --radius: 8px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
+
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+  .titulo-h { font-size: 15px; font-weight: 600; color: #fff; }
+  .sep { color: rgba(255,255,255,0.4); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .proc-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--gris-borde); }
+  .proc-icono { width: 52px; height: 52px; border-radius: 12px; background: var(--naranja-suave); border: 1px solid var(--naranja-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; }
+  .proc-titulo { font-size: 22px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .proc-sub { font-size: 14px; color: var(--gris-medio); }
+  .proc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .hist-table { width: 100%; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; }
+  .hist-thead { display: grid; grid-template-columns: 1.2cm 3.2cm 1fr; background: var(--naranja); }
+  .hist-th { font-size: 11px; font-weight: 700; color: #fff; padding: 10px 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .hist-row { display: grid; grid-template-columns: 1.2cm 3.2cm 1fr; border-bottom: 1px solid var(--gris-borde); }
+  .hist-row:last-child { border-bottom: none; }
+  .hist-row.vigente { background: var(--naranja-suave); }
+  .hist-row.vigente .hist-cell { color: var(--naranja); font-weight: 600; }
+  .hist-cell { font-size: 13px; color: var(--gris-medio); padding: 11px 14px; line-height: 1.5; display: flex; align-items: flex-start; }
+  .hist-cell:first-child { font-weight: 700; color: var(--gris-oscuro); justify-content: center; }
+  .hist-row.vigente .hist-cell:first-child { color: var(--naranja); }
+  .tag-vigente { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--naranja); color: #fff; margin-left: 6px; vertical-align: middle; }
+
+  .firmas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .firma-card { background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 13px 14px; }
+  .firma-rol { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gris-medio); margin-bottom: 4px; }
+  .firma-nombre { font-size: 13px; font-weight: 600; color: var(--gris-oscuro); }
+  .firma-puesto { font-size: 12px; color: var(--gris-medio); margin-top: 1px; }
+
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--naranja); margin-bottom: 10px; margin-top: 28px; }
+
+  .nav-footer { display: flex; align-items: stretch; gap: 0; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; margin-top: 32px; }
+  .nav-btn { flex: 1; display: flex; align-items: center; gap: 10px; padding: 13px 16px; text-decoration: none; color: var(--gris-oscuro); background: var(--gris-suave); transition: background 0.15s; }
+  .nav-btn:hover { background: var(--naranja-suave); }
+  .nav-btn.prev { justify-content: flex-start; border-right: 1px solid var(--gris-borde); }
+  .nav-btn.next { justify-content: flex-end; text-align: right; }
+  .nav-arrow { font-size: 20px; color: var(--naranja); flex-shrink: 0; }
+  .nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #B4B2A9; margin-bottom: 2px; }
+  .nav-titulo { font-size: 13px; font-weight: 600; color: var(--gris-oscuro); line-height: 1.3; }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; font-size: 12px; color: var(--gris-medio); flex-wrap: wrap; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .proc-icono { display: none; }
+    .firmas-grid { grid-template-columns: 1fr; }
+    .hist-thead, .hist-row { grid-template-columns: 0.8cm 2.8cm 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <span class="codigo">MCM-01-G</span>
+  <span class="sep">›</span>
+  <span class="titulo-h">Historial de revisiones</span>
+</div>
+
+<div class="container">
+
+  <div class="proc-header">
+    <div class="proc-icono">📝</div>
+    <div>
+      <div class="proc-titulo">Historial de revisiones</div>
+      <div class="proc-sub">Registro de todos los cambios realizados al Manual de Requerimientos a Proveedores Directos desde su emisión</div>
+      <div class="proc-meta">
+        <span class="badge">MCM-01-G</span>
+        <span class="badge">Revisión vigente: 12</span>
+        <span class="badge">09 de junio de 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hist-table">
+    <div class="hist-thead">
+      <div class="hist-th">Rev.</div>
+      <div class="hist-th">Fecha</div>
+      <div class="hist-th">Descripción del cambio</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">00</div>
+      <div class="hist-cell">29 de ago. de 2019</div>
+      <div class="hist-cell">Emisión del documento.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">01</div>
+      <div class="hist-cell">20 de jul. de 2020</div>
+      <div class="hist-cell">Se actualiza alcance del presente manual, incluyendo a proveedores indirectos.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">02</div>
+      <div class="hist-cell">02 de sep. de 2020</div>
+      <div class="hist-cell">Se incluye el apartado 7.4 notificación de cambio. Se modifica el proceso para evaluación inicial y reevaluación anual de proveedores directos.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">03</div>
+      <div class="hist-cell">08 de feb. de 2021</div>
+      <div class="hist-cell">Se incluye evaluación para proveedores de calibración y de sorteo, se realizan modificaciones para los clientes-proveedores y se agrega condicionantes para los materiales propiedad de cliente.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">04</div>
+      <div class="hist-cell">25 de mar. de 2021</div>
+      <div class="hist-cell">Adecuación de puestos vs. organigrama vigente. Revisión y actualización de responsabilidades en administración de PPAPs, así como exclusiones en la entrega. Aclaración respecto a material propiedad del cliente. Se excluyen auditorías a proveedores designados por cliente. Se define plan de escalación en generalidades.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">05</div>
+      <div class="hist-cell">31 de may. de 2021</div>
+      <div class="hist-cell">Se realiza modificación de clasificación de empaques y se mencionan algunas exclusiones. Se adecua criterios y formato de evaluación para proveedores de servicios específicos. Se cambió el formato de 8D's por actualización.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">06</div>
+      <div class="hist-cell">02 de jul. de 2021</div>
+      <div class="hist-cell">Se incluye requisito de datos para certificados de calidad y prueba de flamabilidad a las revalidaciones anuales de PPAP para proveedores de resina. Se mencionan requisitos para recibo de sustancias químicas y modificación de tiempos de respuesta.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">07</div>
+      <div class="hist-cell">02 de mar. de 2022</div>
+      <div class="hist-cell">Revisión anual.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">08</div>
+      <div class="hist-cell">10 de ago. de 2022</div>
+      <div class="hist-cell">Se incluye la parte de proveedores externos para la realización de trabajos dentro de las instalaciones. Se incluye formato FPCM-01-17 Check List de Aspectos Ambientales a Proveedores de Servicios. Se incluye proceso de escalación para proveedores y portal de proveedores para subir facturas. Se modifica los lineamientos de seguridad. Se anexa lista de verificación para materiales a volumen/granel FPCA-01-07 de acuerdo con el manual de referencia AIAG.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">09</div>
+      <div class="hist-cell">14 de feb. de 2023</div>
+      <div class="hist-cell">Revisión anual.</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">10</div>
+      <div class="hist-cell">20 de jul. de 2023</div>
+      <div class="hist-cell">Se amplía el apartado de responsabilidades del proveedor para la confirmación del manual. Se incluye en generalidades la difusión del manual y el método de envío. Se incluye el apartado 9.4 Requisitos Legales y Regulatorios. Se amplía el apartado 9.8 No conformidades con cambio físico, disposición de material y tiempo máximo en cuarentena. Se modifica el apartado 9.10 Inspección y Recibo para el arribo de sustancias químicas, solventes y mezclas. Se actualiza el formato FPSG-03-01 Reporte para Solución de Problemas (8D's).</div>
+    </div>
+
+    <div class="hist-row">
+      <div class="hist-cell">11</div>
+      <div class="hist-cell">04 de jul. de 2025</div>
+      <div class="hist-cell">Se realiza la separación de manuales: uno para proveedores directos y otro para proveedores indirectos. Se actualiza el alcance. Cambia función de comprador a coordinador de compras.</div>
+    </div>
+
+    <div class="hist-row vigente">
+      <div class="hist-cell">12 <span class="tag-vigente">Vigente</span></div>
+      <div class="hist-cell">09 de jun. de 2026</div>
+      <div class="hist-cell">Se actualizan los criterios para evaluación de proveedores directos conforme al indicador de evaluación. Se actualizan puestos conforme a organigrama vigente. Se retira lista de verificación de requerimiento de materiales a volumen/granel FPCA-01-07. Se describe la solicitud de documentación PPAP a proveedor bajo el formato de solicitud que proporcione el proveedor (check list). Para producto no conforme se actualiza el análisis a causa raíz.</div>
+    </div>
+
+  </div>
+
+  <div class="section-label">Autorizaciones — revisión 12</div>
+  <div class="firmas-grid">
+    <div class="firma-card">
+      <div class="firma-rol">Elaboró</div>
+      <div class="firma-nombre">Maria de la Luz Morales Ruiz</div>
+      <div class="firma-puesto">Jefatura de SAC y Logística</div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-rol">Elaboró</div>
+      <div class="firma-nombre">Michelle Peña</div>
+      <div class="firma-puesto">Analista de Materiales</div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-rol">Revisó</div>
+      <div class="firma-nombre">Alma Miriam Lopez</div>
+      <div class="firma-puesto">Coordinación de Seg. Hig. y Medio Ambiente</div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-rol">Revisó</div>
+      <div class="firma-nombre">Rosalinda Santos</div>
+      <div class="firma-puesto">Jefatura de Ingeniería</div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-rol">Revisó</div>
+      <div class="firma-nombre">Jorge Erreguin</div>
+      <div class="firma-puesto">Jefatura de Calidad</div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-rol">Revisó</div>
+      <div class="firma-nombre">Jeny Feregrino</div>
+      <div class="firma-puesto">Gerencia de Calidad y SG</div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-rol">Revisó y Aprobó</div>
+      <div class="firma-nombre">Ernesto Cordera Ortiz</div>
+      <div class="firma-puesto">Gerencia de Planta</div>
+    </div>
+    <div class="firma-card">
+      <div class="firma-rol">Revisó y Aprobó</div>
+      <div class="firma-nombre">Víctor Manuel Martínez López</div>
+      <div class="firma-puesto">Gerencia Técnico</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span><a href="icm-historial-revisiones.html" style="color:var(--naranja); text-decoration:none; font-weight:600;">Rev. 12</a> · 09 de jun. de 2026</span>
+  </div>
+
+  <div class="nav-footer">
+    <a href="icm-seccion-9-15-seguridad-ambiental.html" class="nav-btn prev">
+      <span class="nav-arrow">‹</span>
+      <div>
+        <div class="nav-label">Anterior</div>
+        <div class="nav-titulo">Sec. 9.15 — Seguridad y Ambiental</div>
+      </div>
+    </a>
+    <a href="icm-manual-mcm-01-g.html" class="nav-btn next">
+      <div>
+        <div class="nav-label">Volver al índice</div>
+        <div class="nav-titulo">MCM-01-G — Índice del manual</div>
+      </div>
+      <span class="nav-arrow">›</span>
+    </a>
+  </div>
+
+</div>
+</body>
+</html>
