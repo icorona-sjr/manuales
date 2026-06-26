@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>9.5 Notificación de cambios · 9.7 Trazabilidad — ICM</title>
+<title>9.5 Notificación de cambios · 9.6 Cambios de Ingeniería · 9.7 Trazabilidad — ICM</title>
 <style>
   :root {
     --naranja: #D85A20; --naranja-suave: #FDF0EA; --naranja-borde: #F5C4A0;
@@ -85,6 +85,16 @@
     .cambios-grid { grid-template-columns: 1fr; }
     .plazo-num { min-width: 56px; }
   }
+
+  .nav-footer { display: flex; align-items: stretch; gap: 0; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; margin-top: 32px; }
+  .nav-btn { flex: 1; display: flex; align-items: center; gap: 10px; padding: 13px 16px; text-decoration: none; color: var(--gris-oscuro); background: var(--gris-suave); transition: background 0.15s; }
+  .nav-btn:hover { background: var(--naranja-suave); }
+  .nav-btn.prev { justify-content: flex-start; border-right: 1px solid var(--gris-borde); }
+  .nav-btn.next { justify-content: flex-end; text-align: right; }
+  .nav-btn.solo { justify-content: flex-end; text-align: right; }
+  .nav-arrow { font-size: 20px; color: var(--naranja); flex-shrink: 0; }
+  .nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gris-claro, #B4B2A9); margin-bottom: 2px; }
+  .nav-titulo { font-size: 13px; font-weight: 600; color: var(--gris-oscuro); line-height: 1.3; }
 </style>
 </head>
 <body>
@@ -92,7 +102,7 @@
 <div class="header-bar">
   <span class="codigo">MCM-01-G</span>
   <span class="sep">›</span>
-  <span class="titulo-h">9.5 Notificación de cambios · 9.7 Trazabilidad</span>
+  <span class="titulo-h">9.5 Notificación de cambios · 9.6 Cambios de ingeniería · 9.7 Trazabilidad</span>
 </div>
 
 <div class="container">
@@ -100,7 +110,7 @@
   <div class="proc-header">
     <div class="proc-icono">🔔</div>
     <div>
-      <div class="proc-titulo">9.5 Notificación de cambios · 9.7 Trazabilidad</div>
+      <div class="proc-titulo">9.5 Notificación de cambios · 9.6 Cambios de ingeniería · 9.7 Trazabilidad</div>
       <div class="proc-sub">Cuándo y cómo comunicar cambios a ICM, y cómo identificar correctamente los materiales entregados</div>
       <div class="proc-meta">
         <span class="badge">Responsable: Proveedor</span>
@@ -170,7 +180,7 @@
         <div class="plazo-texto"><strong>Emergencias o situaciones extraordinarias</strong> que pongan en riesgo la entrega de materiales en los tiempos establecidos.</div>
       </div>
     </div>
-    <div class="warn">⚠️ Todo cambio de ingeniería debe ser evaluado y aprobado por ICM <strong>antes de su implementación</strong>. Los cambios solo surten efecto hasta que ICM los libere formalmente por escrito.</div>
+    <div class="warn">⚠️ <span>Todo cambio de ingeniería debe ser evaluado y aprobado por ICM <strong>antes de su implementación</strong>. Los cambios solo surten efecto hasta que ICM los libere formalmente por escrito.</span></div>
   </div>
 
   <div class="section">
@@ -195,6 +205,39 @@
   </div>
 
   <div class="divider"></div>
+
+<div class="section">
+    <div class="section-label">9.6 — Cambio de especificaciones y cambios de ingeniería</div>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div style="background:var(--gris-suave); border:1px solid var(--gris-borde); border-radius:var(--radius); padding:13px 14px; display:flex; gap:12px; align-items:flex-start;">
+        <div style="width:34px; height:34px; border-radius:var(--radius); background:var(--azul-suave); border:1px solid var(--azul-borde); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:16px;">📐</div>
+        <div>
+          <div style="font-size:14px; font-weight:600; color:var(--gris-oscuro); margin-bottom:3px;">ICM puede cambiar especificaciones en cualquier momento</div>
+          <div style="font-size:13px; color:var(--gris-medio); line-height:1.5;">ICM se reserva el derecho de realizar cambios de especificaciones con base en los requerimientos del cliente. Los cambios se notifican oportunamente al proveedor de forma electrónica.</div>
+        </div>
+      </div>
+      <div style="background:var(--gris-suave); border:1px solid var(--gris-borde); border-radius:var(--radius); padding:13px 14px; display:flex; gap:12px; align-items:flex-start;">
+        <div style="width:34px; height:34px; border-radius:var(--radius); background:var(--verde-suave); border:1px solid var(--verde-borde); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:16px;">⏱️</div>
+        <div>
+          <div style="font-size:14px; font-weight:600; color:var(--gris-oscuro); margin-bottom:3px;">Tiempo apropiado para implementar</div>
+          <div style="font-size:13px; color:var(--gris-medio); line-height:1.5;">Se concederá al proveedor un tiempo apropiado para la realización e implementación de los cambios requeridos. Los cambios solo surten efecto hasta que sean liberados formalmente por ICM.</div>
+        </div>
+      </div>
+      <div style="background:var(--rojo-suave); border:1px solid var(--rojo-borde); border-radius:var(--radius); padding:13px 14px; display:flex; gap:12px; align-items:flex-start;">
+        <div style="width:34px; height:34px; border-radius:var(--radius); background:#fff; border:1px solid var(--rojo-borde); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:16px;">🔒</div>
+        <div>
+          <div style="font-size:14px; font-weight:600; color:var(--rojo); margin-bottom:3px;">Cambios de ingeniería — aprobación previa obligatoria</div>
+          <div style="font-size:13px; color:var(--rojo); line-height:1.5;">Cualquier cambio de ingeniería propuesto por el proveedor <strong>debe ser evaluado y aprobado por ICM antes de su implementación</strong>. No está permitido implementar cambios sin autorización escrita.</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--amarillo-suave); border:1px solid var(--amarillo-borde); border-radius:var(--radius); padding:11px 14px; font-size:13px; color:var(--amarillo); display:flex; gap:8px; align-items:flex-start; margin-top:10px;">
+      <span style="font-size:14px; flex-shrink:0;">⚠️</span>
+      <span>Ver sección 9.5 para los plazos y el proceso de notificación de cambios a ICM.</span>
+    </div>
+  </div>
+
+<div style="height:1px; background:var(--gris-borde); margin:28px 0;"></div>
 
   <div class="section">
     <div class="section-label">9.7 — Información mínima de trazabilidad en cada entrega</div>
@@ -230,11 +273,28 @@
     </div>
     <div class="danger">🚨 El proveedor debe mantener la capacidad de controlar y rastrear los lotes producidos para ICM en todo momento. Sin trazabilidad completa, el material puede ser rechazado en recibo.</div>
   </div>
-
+  
   <div class="footer">
     <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
     <span>MCM-01-G Rev. 12 · Jun 2026</span>
   </div>
+
+<div class="nav-footer">
+  <a href="icm-seccion-9-3-ppap.html" class="nav-btn prev">
+    <span class="nav-arrow">‹</span>
+    <div>
+      <div class="nav-label">Anterior</div>
+      <div class="nav-titulo">Sec. 9.3 · 9.4 — PPAP y Requisitos Legales</div>
+    </div>
+  </a>
+  <a href="icm-seccion-9-8-no-conformidades.html" class="nav-btn next">
+    <div>
+      <div class="nav-label">Siguiente</div>
+      <div class="nav-titulo">Sec. 9.8 — No Conformidades</div>
+    </div>
+    <span class="nav-arrow">›</span>
+  </a>
+</div>
 
 </div>
 </body>

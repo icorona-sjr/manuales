@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCM-01-G — Manual de Requerimientos a Proveedores Directos</title>
+<style>
+  :root {
+    --naranja: #D85A20; --naranja-suave: #FDF0EA; --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A; --gris-medio: #5F5E5A; --gris-suave: #F1EFE8; --gris-borde: #D3D1C7;
+    --verde: #3B6D11; --verde-suave: #EAF3DE; --verde-borde: #C0DD97;
+    --gris-claro: #B4B2A9;
+    --radius: 8px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--gris-suave); color: var(--gris-oscuro); line-height: 1.6; min-height: 100vh; }
+
+  .topbar { background: var(--naranja); height: 56px; display: flex; align-items: center; padding: 0 32px; gap: 12px; }
+  .back-btn { color: rgba(255,255,255,0.75); font-size: 13px; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+  .back-btn:hover { color: #fff; }
+  .topbar-sep { color: rgba(255,255,255,0.35); }
+  .topbar-titulo { color: #fff; font-size: 14px; font-weight: 600; }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .manual-header { background: #fff; border: 1px solid var(--gris-borde); border-radius: 12px; padding: 24px 28px; margin-bottom: 28px; display: flex; gap: 20px; align-items: flex-start; }
+  .manual-icono { width: 56px; height: 56px; border-radius: 12px; background: var(--naranja-suave); border: 1px solid var(--naranja-borde); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .manual-codigo { font-size: 12px; font-weight: 700; color: var(--naranja); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+  .manual-titulo { font-size: 20px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 6px; line-height: 1.3; }
+  .manual-desc { font-size: 14px; color: var(--gris-medio); line-height: 1.6; }
+  .manual-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .meta-badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .group-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris-claro); margin-bottom: 8px; margin-top: 24px; padding-left: 4px; }
+  .group-label:first-of-type { margin-top: 0; }
+
+  .secciones { display: flex; flex-direction: column; gap: 6px; }
+
+  .sec-link { background: #fff; border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px 18px; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 14px; transition: border-color 0.15s, background 0.15s; }
+  .sec-link:hover { border-color: var(--naranja); background: var(--naranja-suave); }
+  .sec-num { font-size: 11px; font-weight: 700; color: var(--naranja); min-width: 56px; flex-shrink: 0; }
+  .sec-titulo { font-size: 14px; font-weight: 600; color: var(--gris-oscuro); flex: 1; }
+  .sec-desc { font-size: 12px; color: var(--gris-medio); margin-top: 2px; line-height: 1.4; }
+  .sec-estado { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+  .dot-verde { width: 7px; height: 7px; border-radius: 50%; background: var(--verde); }
+  .dot-gris { width: 7px; height: 7px; border-radius: 50%; background: var(--gris-borde); }
+  .estado-texto-verde { font-size: 11px; font-weight: 600; color: var(--verde); }
+  .estado-texto-gris { font-size: 11px; color: var(--gris-claro); }
+  .chevron { font-size: 16px; color: var(--gris-borde); flex-shrink: 0; transition: color 0.15s; }
+  .sec-link:hover .chevron { color: var(--naranja); }
+
+  .sec-disabled { background: #fff; border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px 18px; display: flex; align-items: center; gap: 14px; opacity: 0.5; }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; font-size: 12px; color: var(--gris-medio); flex-wrap: wrap; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .topbar { padding: 0 16px; }
+    .container { padding: 20px 16px 48px; }
+    .manual-header { flex-direction: column; padding: 18px 20px; }
+    .manual-icono { display: none; }
+    .sec-desc { display: none; }
+  }
+
+  .nav-footer { display: flex; align-items: stretch; gap: 0; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; margin-top: 32px; }
+  .nav-btn { flex: 1; display: flex; align-items: center; gap: 10px; padding: 13px 16px; text-decoration: none; color: var(--gris-oscuro); background: var(--gris-suave); transition: background 0.15s; }
+  .nav-btn:hover { background: var(--naranja-suave); }
+  .nav-btn.prev { justify-content: flex-start; border-right: 1px solid var(--gris-borde); }
+  .nav-btn.next { justify-content: flex-end; text-align: right; }
+  .nav-btn.solo { justify-content: flex-end; text-align: right; }
+  .nav-arrow { font-size: 20px; color: var(--naranja); flex-shrink: 0; }
+  .nav-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gris-claro, #B4B2A9); margin-bottom: 2px; }
+  .nav-titulo { font-size: 13px; font-weight: 600; color: var(--gris-oscuro); line-height: 1.3; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="icm-portal-inicio.html" class="back-btn">← Portal de manuales</a>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-titulo">MCM-01-G</span>
+</div>
+
+<div class="container">
+
+  <div class="manual-header">
+    <div class="manual-icono">📦</div>
+    <div>
+      <div class="manual-codigo">MCM-01-G · Revisión 12</div>
+      <div class="manual-titulo">Manual de Requerimientos a Proveedores Directos</div>
+      <div class="manual-desc">Requisitos de calidad, ambiental, PPAP, evaluación mensual y lineamientos para todos los proveedores de insumos directos de Industrial Corona de México.</div>
+      <div class="manual-meta">
+        <span class="meta-badge">Área: Compras</span>
+        <span class="meta-badge">Fecha: 09 Jun 2026</span>
+        <span class="meta-badge">Ref. AIAG · ISO 9001 · IATF 16949</span>
+        <span class="meta-badge">12 secciones disponibles</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRUPO: Introducción -->
+  <div class="group-label">Introducción y fundamentos</div>
+  <div class="secciones">
+
+    <a href="icm-seccion-8-generalidades.html" class="sec-link">
+      <div class="sec-num">Sec. 8</div>
+      <div>
+        <div class="sec-titulo">Generalidades y documentos requeridos</div>
+        <div class="sec-desc">Qué documentos debe entregar cada tipo de proveedor al inicio y anualmente. Proceso de difusión del manual.</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+  </div>
+
+  <!-- GRUPO: Calidad y certificaciones -->
+  <div class="group-label">Calidad y certificaciones</div>
+  <div class="secciones">
+
+    <a href="icm-seccion-9-1-9-2-sgc-auditorias.html" class="sec-link">
+      <div class="sec-num">Sec. 9.1 · 9.2</div>
+      <div>
+        <div class="sec-titulo">Sistema de Gestión de Calidad y Auditorías</div>
+        <div class="sec-desc">Certificaciones requeridas por tipo de proveedor, autoevaluación anual y proceso de auditorías a instalaciones.</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+    <a href="icm-seccion-9-3-ppap.html" class="sec-link">
+      <div class="sec-num">Sec. 9.3 · 9.4</div>
+      <div>
+        <div class="sec-titulo">PPAP y Requisitos Legales y Regulatorios</div>
+        <div class="sec-desc">Proceso de aprobación de partes, documentos requeridos para PPAP inicial, revalidación anual, proyectos nuevos y cumplimiento regulatorio (REACH, RoHS, IIN-04-C).</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+    <div class="sec-disabled" style="display:none;">
+      <div class="sec-num">Sec. 9.4</div>
+    </div>
+
+  </div>
+
+  <!-- GRUPO: Gestión de cambios y trazabilidad -->
+  <div class="group-label">Gestión de cambios y trazabilidad</div>
+  <div class="secciones">
+
+    <a href="icm-seccion-9-5-9-7-cambios-trazabilidad.html" class="sec-link">
+      <div class="sec-num">Sec. 9.5 · 9.6 · 9.7</div>
+      <div>
+        <div class="sec-titulo">Notificación de cambios, cambios de ingeniería y trazabilidad</div>
+        <div class="sec-desc">Cuándo y cómo notificar cambios, proceso de aprobación para cambios de ingeniería e información mínima de trazabilidad en cada entrega.</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+    <div class="sec-disabled" style="display:none;">
+      <div class="sec-num">Sec. 9.6</div>
+    </div>
+
+  </div>
+
+  <!-- GRUPO: No conformidades y calidad -->
+  <div class="group-label">No conformidades y calidad</div>
+  <div class="secciones">
+
+    <a href="icm-seccion-9-8-no-conformidades.html" class="sec-link">
+      <div class="sec-num">Sec. 9.8</div>
+      <div>
+        <div class="sec-titulo">No conformidades y costos</div>
+        <div class="sec-desc">Qué hacer ante material no conforme, tiempos de respuesta, proceso de escalación y costos a cargo del proveedor.</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+  </div>
+
+  <!-- GRUPO: Empaque, recibo y evaluación -->
+  <div class="group-label">Empaque, recibo y evaluación</div>
+  <div class="secciones">
+
+    <a href="icm-seccion-9-9-9-10-empaque-inspeccion.html" class="sec-link">
+      <div class="sec-num">Sec. 9.9 · 9.10</div>
+      <div>
+        <div class="sec-titulo">Empaque e inspección de recibo</div>
+        <div class="sec-desc">Requisitos de empaque y qué revisa ICM al recibir resinas, material de empaque y proveedores indirectos.</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+    <a href="icm-seccion-9-11-evaluacion-proveedores.html" class="sec-link">
+      <div class="sec-num">Sec. 9.11</div>
+      <div>
+        <div class="sec-titulo">Evaluación a proveedores</div>
+        <div class="sec-desc">Criterios de evaluación mensual por tipo de proveedor, escala A/B/C/D y consecuencias según calificación.</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+  </div>
+
+  <!-- GRUPO: Operaciones comerciales -->
+  <div class="group-label">Operaciones comerciales</div>
+  <div class="secciones">
+
+    <a href="icm-seccion-9-12-9-13-9-14-facturacion-recibo-pago.html" class="sec-link">
+      <div class="sec-num">Sec. 9.12 · 9.13 · 9.14</div>
+      <div>
+        <div class="sec-titulo">Facturación, recibo de materiales y condiciones de pago</div>
+        <div class="sec-desc">Documentación obligatoria por entrega, portal de proveedores, horarios de bodega y condiciones comerciales.</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+  </div>
+
+  <!-- GRUPO: Seguridad -->
+  <div class="group-label">Seguridad y medio ambiente</div>
+  <div class="secciones">
+
+    <a href="icm-seccion-9-15-seguridad-ambiental.html" class="sec-link">
+      <div class="sec-num">Sec. 9.15</div>
+      <div>
+        <div class="sec-titulo">Lineamientos de seguridad y ambiental</div>
+        <div class="sec-desc">Proceso de ingreso a instalaciones, EPP obligatorio, prohibiciones en área productiva y protocolo de emergencias.</div>
+      </div>
+      <div class="sec-estado"><span class="dot-verde"></span><span class="estado-texto-verde">Disponible</span></div>
+      <span class="chevron">›</span>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+  </div>
+
+<div class="nav-footer">
+  <a href="icm-portal-inicio.html" class="nav-btn prev">
+    <span class="nav-arrow">‹</span>
+    <div>
+      <div class="nav-label">Anterior</div>
+      <div class="nav-titulo">Portal de inicio</div>
+    </div>
+  </a>
+  <a href="icm-seccion-8-generalidades.html" class="nav-btn next">
+    <div>
+      <div class="nav-label">Siguiente</div>
+      <div class="nav-titulo">Sec. 8 — Generalidades</div>
+    </div>
+    <span class="nav-arrow">›</span>
+  </a>
+</div>
+
+</div>
+</body>
+</html>
