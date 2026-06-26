@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9.3 PPAP — Especificaciones del producto — ICM</title>
+<style>
+  :root {
+    --naranja: #D85A20; --naranja-suave: #FDF0EA; --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A; --gris-medio: #5F5E5A; --gris-suave: #F1EFE8; --gris-borde: #D3D1C7;
+    --verde: #3B6D11; --verde-suave: #EAF3DE; --verde-borde: #C0DD97;
+    --rojo: #A32D2D; --rojo-suave: #FCEBEB; --rojo-borde: #F7C1C1;
+    --amarillo: #854F0B; --amarillo-suave: #FAEEDA; --amarillo-borde: #FAC775;
+    --azul: #185FA5; --azul-suave: #E6F1FB; --azul-borde: #85B7EB;
+    --morado: #3C3489; --morado-suave: #EEEDFE; --morado-borde: #AFA9EC;
+    --radius: 8px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
+
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .header-bar .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-bar .titulo { font-size: 15px; font-weight: 600; color: #fff; }
+  .header-bar .sep { color: rgba(255,255,255,0.4); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .proc-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--gris-borde); }
+  .proc-icono { width: 52px; height: 52px; border-radius: 12px; background: var(--amarillo-suave); border: 1px solid var(--amarillo-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; }
+  .proc-titulo { font-size: 22px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .proc-sub { font-size: 14px; color: var(--gris-medio); }
+  .proc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .section { margin-bottom: 28px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--naranja); margin-bottom: 10px; }
+  .divider { height: 1px; background: var(--gris-borde); margin: 28px 0; }
+
+  .info { background: var(--azul-suave); border: 1px solid var(--azul-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--azul); display: flex; gap: 8px; align-items: flex-start; margin-bottom: 10px; }
+  .warn { background: var(--amarillo-suave); border: 1px solid var(--amarillo-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--amarillo); display: flex; gap: 8px; align-items: flex-start; margin-top: 10px; }
+  .note { background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--gris-medio); display: flex; gap: 8px; align-items: flex-start; margin-top: 10px; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tab { font-size: 13px; padding: 7px 16px; border-radius: 20px; border: 1px solid var(--gris-borde); background: var(--gris-suave); color: var(--gris-medio); cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+  .tab:hover { border-color: var(--naranja); color: var(--naranja); }
+  .tab.active { background: var(--amarillo-suave); border-color: var(--amarillo-borde); color: var(--amarillo); font-weight: 600; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .steps { display: flex; flex-direction: column; }
+  .step { display: flex; gap: 16px; }
+  .step-left { display: flex; flex-direction: column; align-items: center; }
+  .step-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--naranja-suave); border: 2px solid var(--naranja); color: var(--naranja); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-line { width: 2px; flex: 1; background: var(--gris-borde); margin: 4px 0; min-height: 12px; }
+  .step:last-child .step-line { display: none; }
+  .step-body { padding-bottom: 20px; flex: 1; padding-top: 4px; }
+  .step-titulo { font-size: 15px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .step-desc { font-size: 14px; color: var(--gris-medio); line-height: 1.6; }
+  .step-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-top: 8px; background: var(--azul-suave); color: var(--azul); border: 1px solid var(--azul-borde); }
+
+  .checklist { display: flex; flex-direction: column; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--gris-borde); }
+  .check-item:last-child { border-bottom: none; }
+  .check-num { width: 24px; height: 24px; border-radius: 50%; background: var(--amarillo-suave); color: var(--amarillo); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; border: 1px solid var(--amarillo-borde); }
+  .check-titulo { font-size: 14px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 3px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .check-desc { font-size: 13px; color: var(--gris-medio); line-height: 1.45; }
+  .tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .tag-req { background: var(--rojo-suave); color: var(--rojo); border: 1px solid var(--rojo-borde); }
+  .tag-cond { background: var(--amarillo-suave); color: var(--amarillo); border: 1px solid var(--amarillo-borde); }
+
+  .roles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .rol-card { background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px; }
+  .rol-nombre { font-size: 13px; font-weight: 700; color: var(--naranja); margin-bottom: 8px; }
+  .rol-lista { font-size: 13px; color: var(--gris-medio); line-height: 1.8; }
+
+  .excl-list { display: flex; flex-direction: column; gap: 6px; }
+  .excl-item { display: flex; align-items: center; gap: 10px; background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 11px 14px; font-size: 13px; color: var(--gris-medio); }
+  .excl-icon { font-size: 16px; flex-shrink: 0; }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; font-size: 12px; color: var(--gris-medio); flex-wrap: wrap; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .proc-icono { display: none; }
+    .roles { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <span class="codigo">MCM-01-G</span>
+  <span class="sep">›</span>
+  <span class="titulo">9.3 PPAP — Especificaciones del producto</span>
+</div>
+
+<div class="container">
+
+  <div class="proc-header">
+    <div class="proc-icono">📋</div>
+    <div>
+      <div class="proc-titulo">9.3 PPAP — Especificaciones del producto</div>
+      <div class="proc-sub">Proceso de Aprobación de Partes de Producción para proveedores de ICM</div>
+      <div class="proc-meta">
+        <span class="badge">PPAP Nivel 1 por material</span>
+        <span class="badge">Referencia: AIAG Apéndice F</span>
+        <span class="badge">Procedimiento PIN-02-C · PCM-01-G</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">¿Qué es el PPAP y para qué sirve?</div>
+    <div class="info">ℹ️ El PPAP (Production Parts Approval Process) es el proceso formal mediante el cual ICM aprueba los materiales antes de incorporarlos a producción. Garantiza que el proveedor puede cumplir consistentemente con las especificaciones requeridas por el cliente.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Proceso de solicitud y aprobación</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Proveedor recibe solicitud de PPAP</div>
+          <div class="step-desc">El Ingeniero de Calidad ICM solicita al proveedor el formato checklist de solicitud de PPAP. El Analista de Materiales da seguimiento a esta solicitud con el proveedor.</div>
+          <div><span class="step-chip">👤 Ing. de Calidad + Analista de Materiales</span></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">ICM llena y envía el formato al proveedor</div>
+          <div class="step-desc">Con base en los requerimientos establecidos en el procedimiento, el Ingeniero de Calidad completa el checklist y lo envía al proveedor para que lo atienda.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Proveedor entrega carpeta electrónica PPAP Nivel 1</div>
+          <div class="step-desc">Una carpeta electrónica por cada material vendido a ICM, conforme al Apéndice F del manual PPAP de AIAG. Ver checklist de documentos en la sección siguiente.</div>
+          <div><span class="step-chip">📁 PPAP Nivel 1 · Apéndice F AIAG</span></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">4</div></div>
+        <div class="step-body">
+          <div class="step-titulo">ICM valida y aprueba la documentación</div>
+          <div class="step-desc">El Ingeniero de Calidad revisa, valida y aprueba la información. La documentación queda resguardada en carpeta electrónica del área de Calidad.</div>
+          <div><span class="step-chip">✅ Responsable: Ing. de Calidad ICM</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Documentos requeridos — selecciona el tipo de entrega</div>
+    <div class="tabs">
+      <button class="tab active" onclick="st('inicial', this)">PPAP inicial</button>
+      <button class="tab" onclick="st('revalidacion', this)">Revalidación anual</button>
+      <button class="tab" onclick="st('nuevo', this)">Proyecto nuevo</button>
+    </div>
+
+    <div id="tab-inicial" class="panel active">
+      <div class="checklist">
+        <div class="check-item">
+          <div class="check-num">1</div>
+          <div>
+            <div class="check-titulo">Certificado de calidad vigente <span class="tag tag-req">Requerido</span></div>
+            <div class="check-desc">ISO 9001 o IATF 16949 según el tipo de proveedor (fabricante o distribuidor).</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">2</div>
+          <div>
+            <div class="check-titulo">PSW — Part Submission Warrant <span class="tag tag-req">Requerido</span></div>
+            <div class="check-desc">En formato vigente, conforme a los requerimientos del Apéndice F del manual PPAP de AIAG.</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">3</div>
+          <div>
+            <div class="check-titulo">Certificado de calidad del producto <span class="tag tag-req">Requerido</span></div>
+            <div class="check-desc">Con antigüedad no mayor a 3 meses cuando sea posible.</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">4</div>
+          <div>
+            <div class="check-titulo">Prueba de flamabilidad <span class="tag tag-cond">Si aplica</span></div>
+            <div class="check-desc">Solo para resinas que lo requieran según las especificaciones del cliente de ICM.</div>
+          </div>
+        </div>
+      </div>
+      <div class="note">📁 Se requiere una carpeta electrónica por cada material vendido a ICM.</div>
+    </div>
+
+    <div id="tab-revalidacion" class="panel">
+      <div class="checklist">
+        <div class="check-item">
+          <div class="check-num">1</div>
+          <div>
+            <div class="check-titulo">Certificado vigente del sistema de calidad del fabricante <span class="tag tag-req">Requerido</span></div>
+            <div class="check-desc">ISO 9001 o IATF 16949 según corresponda. Debe estar vigente al momento de la entrega.</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">2</div>
+          <div>
+            <div class="check-titulo">PSW en formato vigente <span class="tag tag-req">Requerido</span></div>
+            <div class="check-desc">Conforme a los requerimientos del Apéndice F del manual PPAP de AIAG.</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">3</div>
+          <div>
+            <div class="check-titulo">Certificado de calidad del producto <span class="tag tag-cond">Cuando sea posible</span></div>
+            <div class="check-desc">Con antigüedad no mayor a 3 meses.</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-num">4</div>
+          <div>
+            <div class="check-titulo">Resultados de la última prueba de flamabilidad <span class="tag tag-cond">Si aplica</span></div>
+            <div class="check-desc">Solo cuando el material lo requiera según las especificaciones aplicables.</div>
+          </div>
+        </div>
+      </div>
+      <div class="warn">🔄 La revalidación es anual. ICM la solicita a través del Analista de Materiales.</div>
+    </div>
+
+    <div id="tab-nuevo" class="panel">
+      <div class="info">🚀 Para proyectos nuevos o documentos específicos no contemplados en el PPAP estándar, el Ingeniero de Proyecto de ICM gestiona los requerimientos especiales.</div>
+      <div class="steps" style="margin-top: 16px;">
+        <div class="step">
+          <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-titulo">Ingeniero de Proyecto identifica necesidad</div>
+            <div class="step-desc">Detecta que el proyecto requiere documentación especial o formatos específicos no cubiertos por el PPAP estándar.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-titulo">Coordina con Calidad y Compras</div>
+            <div class="step-desc">El Ing. de Proyecto entrega la lista de requerimientos específicos al Ingeniero de Calidad y al Analista de Materiales.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-dot">3</div></div>
+          <div class="step-body">
+            <div class="step-titulo">Calidad y Compras envían requerimientos al proveedor</div>
+            <div class="step-desc">El Ing. de Calidad y el Analista de Materiales coordinan el envío de los requerimientos específicos al proveedor para su atención oportuna.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Quién hace qué</div>
+    <div class="roles">
+      <div class="rol-card">
+        <div class="rol-nombre">🔬 Ing. de Calidad ICM</div>
+        <div class="rol-lista">
+          Solicita checklist al proveedor<br>
+          Llena y envía el formato<br>
+          Valida y aprueba el PPAP<br>
+          Resguarda la documentación
+        </div>
+      </div>
+      <div class="rol-card">
+        <div class="rol-nombre">🛒 Analista de Materiales</div>
+        <div class="rol-lista">
+          Da seguimiento con el proveedor<br>
+          Compra solo a proveedores aprobados<br>
+          Coordina revalidaciones anuales
+        </div>
+      </div>
+      <div class="rol-card">
+        <div class="rol-nombre">🏭 Proveedor</div>
+        <div class="rol-lista">
+          Entrega carpeta PPAP Nivel 1<br>
+          Una carpeta por material vendido<br>
+          Revalida la documentación anualmente
+        </div>
+      </div>
+      <div class="rol-card">
+        <div class="rol-nombre">🔧 Ing. de Proyecto ICM</div>
+        <div class="rol-lista">
+          Gestiona proyectos nuevos<br>
+          Coordina requerimientos especiales<br>
+          Trabaja con Calidad y Compras
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Proveedores excluidos del PPAP</div>
+    <div class="excl-list">
+      <div class="excl-item"><span class="excl-icon">🚫</span> Proveedores de material de empaque (cajas, bolsas, separadores)</div>
+      <div class="excl-item"><span class="excl-icon">🚫</span> Material propiedad del cliente (materia prima a consignación)</div>
+      <div class="excl-item"><span class="excl-icon">🚫</span> Clientes / proveedores (relación dual)</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+  </div>
+
+</div>
+
+<script>
+function st(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

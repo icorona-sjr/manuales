@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9.5 Notificación de cambios · 9.7 Trazabilidad — ICM</title>
+<style>
+  :root {
+    --naranja: #D85A20; --naranja-suave: #FDF0EA; --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A; --gris-medio: #5F5E5A; --gris-suave: #F1EFE8; --gris-borde: #D3D1C7;
+    --verde: #3B6D11; --verde-suave: #EAF3DE; --verde-borde: #C0DD97;
+    --rojo: #A32D2D; --rojo-suave: #FCEBEB; --rojo-borde: #F7C1C1;
+    --amarillo: #854F0B; --amarillo-suave: #FAEEDA; --amarillo-borde: #FAC775;
+    --azul: #185FA5; --azul-suave: #E6F1FB; --azul-borde: #85B7EB;
+    --morado: #3C3489; --morado-suave: #EEEDFE; --morado-borde: #AFA9EC;
+    --radius: 8px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
+
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+  .titulo-h { font-size: 15px; font-weight: 600; color: #fff; }
+  .sep { color: rgba(255,255,255,0.4); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .proc-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--gris-borde); }
+  .proc-icono { width: 52px; height: 52px; border-radius: 12px; background: var(--verde-suave); border: 1px solid var(--verde-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; }
+  .proc-titulo { font-size: 22px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .proc-sub { font-size: 14px; color: var(--gris-medio); }
+  .proc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .section { margin-bottom: 28px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--naranja); margin-bottom: 12px; }
+  .divider { height: 1px; background: var(--gris-borde); margin: 28px 0; }
+
+  .info { background: var(--azul-suave); border: 1px solid var(--azul-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--azul); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+  .warn { background: var(--amarillo-suave); border: 1px solid var(--amarillo-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--amarillo); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+  .danger { background: var(--rojo-suave); border: 1px solid var(--rojo-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--rojo); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+
+  .cambios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .cambio-card { background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px; }
+  .cambio-tipo { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .t-empresa { color: var(--verde); }
+  .t-ing { color: var(--azul); }
+  .t-emergencia { color: var(--rojo); }
+  .t-cliente { color: var(--morado); }
+  .cambio-lista { font-size: 13px; color: var(--gris-medio); line-height: 1.85; list-style: none; }
+  .cambio-lista li { display: flex; gap: 8px; align-items: baseline; }
+  .cambio-lista li::before { content: "·"; color: var(--gris-borde); font-size: 18px; line-height: 1; flex-shrink: 0; }
+
+  .plazos { display: flex; flex-direction: column; gap: 8px; }
+  .plazo-row { display: flex; align-items: center; gap: 16px; background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px 16px; }
+  .plazo-num { font-size: 26px; font-weight: 800; line-height: 1; min-width: 76px; }
+  .plazo-num.normal { color: var(--amarillo); }
+  .plazo-num.urgente { color: var(--rojo); font-size: 18px; padding-top: 4px; }
+  .plazo-unit { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px; }
+  .plazo-unit.normal { color: var(--amarillo); }
+  .plazo-unit.urgente { color: var(--rojo); }
+  .plazo-sep { width: 1px; height: 40px; background: var(--gris-borde); flex-shrink: 0; }
+  .plazo-texto { flex: 1; font-size: 14px; color: var(--gris-medio); line-height: 1.5; }
+  .plazo-texto strong { font-weight: 600; color: var(--gris-oscuro); }
+
+  .contactos { display: flex; flex-direction: column; gap: 8px; }
+  .contacto-row { display: flex; gap: 14px; align-items: flex-start; background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 13px 14px; }
+  .contacto-num { width: 28px; height: 28px; border-radius: 50%; background: var(--naranja); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .contacto-rol { font-size: 14px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 2px; }
+  .contacto-desc { font-size: 13px; color: var(--gris-medio); line-height: 1.5; }
+
+  .traz-list { display: flex; flex-direction: column; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; }
+  .traz-row { display: flex; align-items: flex-start; gap: 14px; padding: 13px 14px; border-bottom: 1px solid var(--gris-borde); }
+  .traz-row:last-child { border-bottom: none; }
+  .traz-icono { width: 34px; height: 34px; border-radius: var(--radius); background: var(--verde-suave); border: 1px solid var(--verde-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+  .traz-titulo { font-size: 14px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 3px; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .traz-desc { font-size: 13px; color: var(--gris-medio); line-height: 1.45; }
+  .tag-req { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--rojo-suave); color: var(--rojo); border: 1px solid var(--rojo-borde); }
+  .tag-opt { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: var(--gris-suave); color: var(--gris-medio); border: 1px solid var(--gris-borde); }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; font-size: 12px; color: var(--gris-medio); flex-wrap: wrap; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .proc-icono { display: none; }
+    .cambios-grid { grid-template-columns: 1fr; }
+    .plazo-num { min-width: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <span class="codigo">MCM-01-G</span>
+  <span class="sep">›</span>
+  <span class="titulo-h">9.5 Notificación de cambios · 9.7 Trazabilidad</span>
+</div>
+
+<div class="container">
+
+  <div class="proc-header">
+    <div class="proc-icono">🔔</div>
+    <div>
+      <div class="proc-titulo">9.5 Notificación de cambios · 9.7 Trazabilidad</div>
+      <div class="proc-sub">Cuándo y cómo comunicar cambios a ICM, y cómo identificar correctamente los materiales entregados</div>
+      <div class="proc-meta">
+        <span class="badge">Responsable: Proveedor</span>
+        <span class="badge">Notificar a: Analista de Materiales</span>
+        <span class="badge">Copia: Jefatura SAC y Logística</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">9.5 — Tipos de cambios que debes notificar</div>
+    <div class="cambios-grid">
+      <div class="cambio-card">
+        <div class="cambio-tipo t-empresa">Cambios en la empresa</div>
+        <ul class="cambio-lista">
+          <li>Cambio de razón social</li>
+          <li>Cambio de instalaciones</li>
+          <li>Cambio de marca</li>
+          <li>Cambio de divisiones de compañía</li>
+        </ul>
+      </div>
+      <div class="cambio-card">
+        <div class="cambio-tipo t-ing">Cambios de ingeniería</div>
+        <ul class="cambio-lista">
+          <li>Cambio de especificaciones</li>
+          <li>Cambios de proceso productivo</li>
+          <li>Modificaciones al producto</li>
+          <li>Requieren aprobación previa de ICM</li>
+        </ul>
+      </div>
+      <div class="cambio-card">
+        <div class="cambio-tipo t-emergencia">Situaciones de emergencia</div>
+        <ul class="cambio-lista">
+          <li>Riesgo en tiempos de entrega</li>
+          <li>Desabasto inminente</li>
+          <li>Notificación inmediata al detectar</li>
+        </ul>
+      </div>
+      <div class="cambio-card">
+        <div class="cambio-tipo t-cliente">Cambios del cliente de ICM</div>
+        <ul class="cambio-lista">
+          <li>Cuando tienen alcance al proveedor</li>
+          <li>Compras ICM notifica al proveedor</li>
+          <li>Cumplimiento inmediato requerido</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Plazos de notificación</div>
+    <div class="plazos">
+      <div class="plazo-row">
+        <div>
+          <div class="plazo-num normal">4</div>
+          <div class="plazo-unit normal">semanas</div>
+        </div>
+        <div class="plazo-sep"></div>
+        <div class="plazo-texto"><strong>Cambios planificados</strong> — razón social, instalaciones, marca, divisiones o cualquier cambio que pueda afectar el suministro de materiales directos e indirectos.</div>
+      </div>
+      <div class="plazo-row">
+        <div>
+          <div class="plazo-num urgente">Inmediato</div>
+          <div class="plazo-unit urgente">al detectar</div>
+        </div>
+        <div class="plazo-sep"></div>
+        <div class="plazo-texto"><strong>Emergencias o situaciones extraordinarias</strong> que pongan en riesgo la entrega de materiales en los tiempos establecidos.</div>
+      </div>
+    </div>
+    <div class="warn">⚠️ Todo cambio de ingeniería debe ser evaluado y aprobado por ICM <strong>antes de su implementación</strong>. Los cambios solo surten efecto hasta que ICM los libere formalmente por escrito.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">¿A quién notificar?</div>
+    <div class="contactos">
+      <div class="contacto-row">
+        <div class="contacto-num">1</div>
+        <div>
+          <div class="contacto-rol">Analista de Materiales ICM</div>
+          <div class="contacto-desc">Contacto principal para todo tipo de cambio. Recibe la notificación y coordina internamente con las áreas correspondientes.</div>
+        </div>
+      </div>
+      <div class="contacto-row">
+        <div class="contacto-num">2</div>
+        <div>
+          <div class="contacto-rol">Jefatura de SAC y Logística</div>
+          <div class="contacto-desc">Copia obligatoria en todas las notificaciones. Evalúa el impacto en el suministro y coordina con producción para mitigar afectaciones.</div>
+        </div>
+      </div>
+    </div>
+    <div class="info">📧 Todas las notificaciones deben realizarse de forma electrónica. Conserva el acuse de recibido de ICM como evidencia del cumplimiento de este requisito.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">9.7 — Información mínima de trazabilidad en cada entrega</div>
+    <div class="traz-list">
+      <div class="traz-row">
+        <div class="traz-icono">#️⃣</div>
+        <div>
+          <div class="traz-titulo">Número de lote <span class="tag-req">Obligatorio</span></div>
+          <div class="traz-desc">Identificación única del lote producido. Permite rastrear el material ante cualquier no conformidad o queja del cliente final.</div>
+        </div>
+      </div>
+      <div class="traz-row">
+        <div class="traz-icono">🏷️</div>
+        <div>
+          <div class="traz-titulo">Descripción del producto <span class="tag-req">Obligatorio</span></div>
+          <div class="traz-desc">Nombre completo del material, grado, color o cualquier especificación que lo identifique de manera inequívoca.</div>
+        </div>
+      </div>
+      <div class="traz-row">
+        <div class="traz-icono">📦</div>
+        <div>
+          <div class="traz-titulo">Cantidad por caja, saco o contenedor <span class="tag-req">Obligatorio</span></div>
+          <div class="traz-desc">Peso o cantidad exacta del material en cada unidad de empaque entregada. Debe coincidir con la orden de compra.</div>
+        </div>
+      </div>
+      <div class="traz-row">
+        <div class="traz-icono">📋</div>
+        <div>
+          <div class="traz-titulo">Información adicional requerida por ICM <span class="tag-opt">Según solicitud</span></div>
+          <div class="traz-desc">Cualquier dato extra que ICM indique en la orden de compra o mediante comunicación formal al proveedor.</div>
+        </div>
+      </div>
+    </div>
+    <div class="danger">🚨 El proveedor debe mantener la capacidad de controlar y rastrear los lotes producidos para ICM en todo momento. Sin trazabilidad completa, el material puede ser rechazado en recibo.</div>
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

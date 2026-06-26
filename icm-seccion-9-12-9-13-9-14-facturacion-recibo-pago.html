@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9.12 Facturación · 9.13 Recibo · 9.14 Condiciones de pago — ICM</title>
+<style>
+  :root {
+    --naranja: #D85A20; --naranja-suave: #FDF0EA; --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A; --gris-medio: #5F5E5A; --gris-suave: #F1EFE8; --gris-borde: #D3D1C7;
+    --verde: #3B6D11; --verde-suave: #EAF3DE; --verde-borde: #C0DD97;
+    --rojo: #A32D2D; --rojo-suave: #FCEBEB; --rojo-borde: #F7C1C1;
+    --amarillo: #854F0B; --amarillo-suave: #FAEEDA; --amarillo-borde: #FAC775;
+    --azul: #185FA5; --azul-suave: #E6F1FB; --azul-borde: #85B7EB;
+    --radius: 8px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
+
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+  .titulo-h { font-size: 15px; font-weight: 600; color: #fff; }
+  .sep { color: rgba(255,255,255,0.4); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .proc-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--gris-borde); }
+  .proc-icono { width: 52px; height: 52px; border-radius: 12px; background: var(--verde-suave); border: 1px solid var(--verde-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; }
+  .proc-titulo { font-size: 22px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .proc-sub { font-size: 14px; color: var(--gris-medio); }
+  .proc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .section { margin-bottom: 28px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--naranja); margin-bottom: 12px; }
+  .divider { height: 1px; background: var(--gris-borde); margin: 28px 0; }
+
+  .info { background: var(--azul-suave); border: 1px solid var(--azul-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--azul); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+  .warn { background: var(--amarillo-suave); border: 1px solid var(--amarillo-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--amarillo); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+  .danger { background: var(--rojo-suave); border: 1px solid var(--rojo-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--rojo); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+
+  .req-list { display: flex; flex-direction: column; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; }
+  .req-row { display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-bottom: 1px solid var(--gris-borde); }
+  .req-row:last-child { border-bottom: none; }
+  .req-icono { font-size: 20px; flex-shrink: 0; }
+  .req-texto { font-size: 14px; color: var(--gris-oscuro); flex: 1; }
+  .req-tag { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
+  .tag-si { background: var(--verde-suave); color: var(--verde); border: 1px solid var(--verde-borde); }
+  .tag-nota { background: var(--amarillo-suave); color: var(--amarillo); border: 1px solid var(--amarillo-borde); }
+
+  .steps { display: flex; flex-direction: column; }
+  .step { display: flex; gap: 16px; }
+  .step-left { display: flex; flex-direction: column; align-items: center; }
+  .step-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--naranja-suave); border: 2px solid var(--naranja); color: var(--naranja); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-line { width: 2px; flex: 1; background: var(--gris-borde); margin: 4px 0; min-height: 12px; }
+  .step:last-child .step-line { display: none; }
+  .step-body { padding-bottom: 20px; flex: 1; padding-top: 4px; }
+  .step-titulo { font-size: 15px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .step-desc { font-size: 14px; color: var(--gris-medio); line-height: 1.6; }
+  .step-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-top: 8px; background: var(--azul-suave); color: var(--azul); border: 1px solid var(--azul-borde); text-decoration: none; }
+
+  .datos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .dato-card { background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 16px 12px; text-align: center; }
+  .dato-val { font-size: 24px; font-weight: 800; color: var(--verde); line-height: 1; }
+  .dato-val.med { font-size: 17px; padding-top: 4px; }
+  .dato-unit { font-size: 11px; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 3px; }
+  .dato-label { font-size: 12px; color: var(--gris-medio); margin-top: 10px; line-height: 1.4; }
+
+  .conds { display: flex; flex-direction: column; gap: 8px; }
+  .cond-row { display: flex; gap: 14px; align-items: flex-start; background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px; }
+  .cond-icono { width: 36px; height: 36px; border-radius: var(--radius); background: var(--verde-suave); border: 1px solid var(--verde-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+  .cond-titulo { font-size: 14px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 3px; }
+  .cond-desc { font-size: 13px; color: var(--gris-medio); line-height: 1.5; }
+  .cond-email { font-size: 13px; color: var(--azul); font-weight: 500; margin-top: 4px; }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; font-size: 12px; color: var(--gris-medio); flex-wrap: wrap; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .proc-icono { display: none; }
+    .datos-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <span class="codigo">MCM-01-G</span>
+  <span class="sep">›</span>
+  <span class="titulo-h">9.12 Facturación · 9.13 Recibo · 9.14 Condiciones de pago</span>
+</div>
+
+<div class="container">
+
+  <div class="proc-header">
+    <div class="proc-icono">🧾</div>
+    <div>
+      <div class="proc-titulo">9.12 Facturación · 9.13 Recibo · 9.14 Condiciones de pago</div>
+      <div class="proc-sub">Documentación requerida, horarios de entrega y cómo se procesan los pagos en ICM</div>
+      <div class="proc-meta">
+        <span class="badge">Analista de Materiales</span>
+        <span class="badge">Jefatura SAC y Logística</span>
+        <span class="badge">Pagos: cada viernes</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">9.12 — Documentos obligatorios en cada entrega</div>
+    <div class="req-list">
+      <div class="req-row">
+        <span class="req-icono">🧾</span>
+        <span class="req-texto">Factura debidamente emitida al momento de la entrega en almacén</span>
+        <span class="req-tag tag-si">Obligatorio</span>
+      </div>
+      <div class="req-row">
+        <span class="req-icono">📋</span>
+        <span class="req-texto">Orden de compra que haga referencia a la factura</span>
+        <span class="req-tag tag-si">Obligatorio</span>
+      </div>
+      <div class="req-row">
+        <span class="req-icono">📧</span>
+        <span class="req-texto">Si no puedes enviar la factura con el transporte — envíala por anticipado al Analista de Materiales y Jefatura SAC y Logística</span>
+        <span class="req-tag tag-nota">Si aplica</span>
+      </div>
+    </div>
+    <div class="danger">🚫 Si el material llega sin factura u orden de compra, <strong>no será recibido</strong>. Sin excepción.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Cómo ingresar tus facturas al portal de proveedores</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Accede al portal de proveedores</div>
+          <div class="step-desc">Ingresa en el portal con tu usuario y contraseña. Si no los tienes, contacta a la Coordinación de Compras ICM para obtener acceso.</div>
+          <a href="https://app.portaldeproveedores.mx" class="step-link" target="_blank">🔗 app.portaldeproveedores.mx</a>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Sube tu factura y complemento de pago</div>
+          <div class="step-desc">Todas las facturas y complementos de pago emitidos a ICM deben ingresarse en el portal para que sean procesados a pago. Sin este paso, el pago no puede procesarse.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div></div>
+        <div class="step-body">
+          <div class="step-titulo">Actualiza tu expediente digital cada mes</div>
+          <div class="step-desc">En el apartado "Expediente Digital" del portal, mantén tu documentación actualizada mensualmente según corresponda.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">9.13 — Condiciones de entrega en bodega ICM</div>
+    <div class="datos-grid">
+      <div class="dato-card">
+        <div class="dato-val">08:00</div>
+        <div class="dato-unit">a 16:30 hrs</div>
+        <div class="dato-label">Horario de recepción de materiales en bodega ICM</div>
+      </div>
+      <div class="dato-card">
+        <div class="dato-val med">Aztecas No. 16</div>
+        <div class="dato-unit">San Juan del Río, Qro.</div>
+        <div class="dato-label">Col. Parque Industrial Nuevo San Juan, CP 76803</div>
+      </div>
+      <div class="dato-card">
+        <div class="dato-val">0</div>
+        <div class="dato-unit">fugas permitidas</div>
+        <div class="dato-label">En unidades de transporte (aceite, anticongelante, u otros)</div>
+      </div>
+    </div>
+    <div class="warn">⚠️ Cualquier desviación en fecha o cantidad debe notificarse <strong>inmediatamente</strong> al contacto directo en ICM para no afectar el suministro acordado en la orden de compra.</div>
+    <div class="info">🚛 Toda unidad de transporte que ingrese a las instalaciones de ICM será verificada para confirmar que no presente fugas de aceite, anticongelante u otros fluidos. Cualquier incidencia se reporta al contacto principal del proveedor y/o cliente.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">9.14 — Condiciones comerciales y de pago</div>
+    <div class="conds">
+      <div class="cond-row">
+        <div class="cond-icono">📅</div>
+        <div>
+          <div class="cond-titulo">Pagos cada viernes</div>
+          <div class="cond-desc">ICM procesa pagos todos los viernes. Para dudas o consultas sobre el estatus de un pago:</div>
+          <div class="cond-email">analista.materiales@icorona.mx</div>
+        </div>
+      </div>
+      <div class="cond-row">
+        <div class="cond-icono">⏳</div>
+        <div>
+          <div class="cond-titulo">Crédito mínimo de 30 días</div>
+          <div class="cond-desc">ICM solicita que el proveedor otorgue un crédito de al menos 30 días como parte de las condiciones para fortalecer la relación comercial de largo plazo.</div>
+        </div>
+      </div>
+      <div class="cond-row">
+        <div class="cond-icono">💻</div>
+        <div>
+          <div class="cond-titulo">Todo de forma electrónica</div>
+          <div class="cond-desc">Órdenes de compra, acuerdos y términos de suministro entre proveedor e ICM deben gestionarse electrónicamente. Además de la versión impresa, se envía copia electrónica al Analista de Materiales y a la Jefatura de SAC y Logística.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

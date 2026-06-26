@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de Manuales — Industrial Corona de México</title>
+<style>
+  :root {
+    --naranja: #D85A20;
+    --naranja-oscuro: #B04518;
+    --naranja-suave: #FDF0EA;
+    --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A;
+    --gris-medio: #5F5E5A;
+    --gris-suave: #F1EFE8;
+    --gris-borde: #D3D1C7;
+    --verde: #3B6D11;
+    --verde-suave: #EAF3DE;
+    --verde-borde: #C0DD97;
+    --rojo: #A32D2D;
+    --rojo-suave: #FCEBEB;
+    --azul: #185FA5;
+    --azul-suave: #E6F1FB;
+    --azul-borde: #85B7EB;
+    --amarillo: #854F0B;
+    --amarillo-suave: #FAEEDA;
+    --amarillo-borde: #FAC775;
+    --morado: #3C3489;
+    --morado-suave: #EEEDFE;
+    --morado-borde: #AFA9EC;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--gris-suave); color: var(--gris-oscuro); line-height: 1.6; min-height: 100vh; }
+
+  /* ── HEADER ── */
+  .topbar { background: var(--naranja); height: 60px; display: flex; align-items: center; padding: 0 32px; gap: 16px; position: sticky; top: 0; z-index: 100; }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; }
+  .logo-circle { width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; letter-spacing: -1px; }
+  .logo-text { color: #fff; font-size: 15px; font-weight: 700; line-height: 1.2; }
+  .logo-sub { color: rgba(255,255,255,0.65); font-size: 11px; font-weight: 400; }
+  .topbar-spacer { flex: 1; }
+  .topbar-info { font-size: 12px; color: rgba(255,255,255,0.7); text-align: right; line-height: 1.4; }
+
+  /* ── HERO ── */
+  .hero { background: #fff; border-bottom: 1px solid var(--gris-borde); padding: 40px 32px 36px; }
+  .hero-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: flex-start; gap: 32px; }
+  .hero-text { flex: 1; }
+  .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--naranja); margin-bottom: 10px; }
+  .hero-title { font-size: 28px; font-weight: 800; color: var(--gris-oscuro); line-height: 1.25; margin-bottom: 10px; }
+  .hero-desc { font-size: 15px; color: var(--gris-medio); line-height: 1.65; max-width: 520px; }
+  .hero-stats { display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
+  .stat { }
+  .stat-num { font-size: 22px; font-weight: 800; color: var(--naranja); line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--gris-medio); margin-top: 2px; }
+  .hero-badge { flex-shrink: 0; background: var(--verde-suave); border: 1px solid var(--verde-borde); border-radius: 12px; padding: 16px 20px; text-align: center; }
+  .hero-badge-icon { font-size: 28px; margin-bottom: 6px; }
+  .hero-badge-texto { font-size: 12px; font-weight: 600; color: var(--verde); line-height: 1.4; }
+
+  /* ── BUSCADOR ── */
+  .search-bar { background: #fff; border-bottom: 1px solid var(--gris-borde); padding: 16px 32px; }
+  .search-inner { max-width: 900px; margin: 0 auto; display: flex; gap: 10px; }
+  .search-input { flex: 1; padding: 10px 16px; border: 1.5px solid var(--gris-borde); border-radius: var(--radius); font-size: 14px; font-family: var(--font); color: var(--gris-oscuro); background: var(--gris-suave); outline: none; transition: border-color 0.15s; }
+  .search-input:focus { border-color: var(--naranja); background: #fff; }
+  .search-input::placeholder { color: var(--gris-medio); }
+  .filter-sel { padding: 10px 14px; border: 1.5px solid var(--gris-borde); border-radius: var(--radius); font-size: 13px; font-family: var(--font); color: var(--gris-medio); background: var(--gris-suave); outline: none; cursor: pointer; }
+  .filter-sel:focus { border-color: var(--naranja); }
+
+  /* ── MAIN GRID ── */
+  .main { max-width: 900px; margin: 0 auto; padding: 28px 32px 64px; }
+
+  .seccion-titulo { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris-medio); margin-bottom: 14px; margin-top: 32px; padding-bottom: 8px; border-bottom: 1px solid var(--gris-borde); }
+  .seccion-titulo:first-child { margin-top: 0; }
+
+  /* Cards de manuales */
+  .cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { background: #fff; border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 18px 20px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; text-decoration: none; color: inherit; display: block; position: relative; }
+  .card:hover { border-color: var(--naranja); box-shadow: 0 2px 12px rgba(216,90,32,0.1); }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .card-icono { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .card-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .tag-nuevo { background: var(--verde-suave); color: var(--verde); border: 1px solid var(--verde-borde); }
+  .tag-actualizado { background: var(--azul-suave); color: var(--azul); border: 1px solid var(--azul-borde); }
+  .tag-borrador { background: var(--amarillo-suave); color: var(--amarillo); border: 1px solid var(--amarillo-borde); }
+  .tag-proximamente { background: var(--gris-suave); color: var(--gris-medio); border: 1px solid var(--gris-borde); }
+  .card-codigo { font-size: 11px; font-weight: 700; color: var(--naranja); letter-spacing: 0.05em; margin-bottom: 4px; }
+  .card-titulo { font-size: 15px; font-weight: 700; color: var(--gris-oscuro); line-height: 1.3; margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: var(--gris-medio); line-height: 1.5; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--gris-borde); }
+  .card-meta { font-size: 11px; color: var(--gris-medio); }
+  .card-secciones { font-size: 11px; font-weight: 600; color: var(--naranja); }
+  .card-arrow { font-size: 16px; color: var(--naranja); opacity: 0; transition: opacity 0.15s; }
+  .card:hover .card-arrow { opacity: 1; }
+  .card-deshabilitado { opacity: 0.55; pointer-events: none; }
+
+  /* Secciones rápidas del MCM-01-G */
+  .secciones-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .sec-item { background: #fff; border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 13px 14px; cursor: pointer; transition: border-color 0.15s; text-decoration: none; color: inherit; display: block; }
+  .sec-item:hover { border-color: var(--naranja); }
+  .sec-item-num { font-size: 11px; font-weight: 700; color: var(--naranja); margin-bottom: 4px; }
+  .sec-item-titulo { font-size: 13px; font-weight: 600; color: var(--gris-oscuro); line-height: 1.3; }
+  .sec-item-estado { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; margin-top: 6px; }
+  .dot-verde { width: 7px; height: 7px; border-radius: 50%; background: var(--verde); flex-shrink: 0; }
+  .dot-gris { width: 7px; height: 7px; border-radius: 50%; background: var(--gris-borde); flex-shrink: 0; }
+
+  /* Aviso de acceso */
+  .aviso { background: var(--naranja-suave); border: 1px solid var(--naranja-borde); border-radius: var(--radius); padding: 14px 18px; display: flex; gap: 14px; align-items: flex-start; margin-bottom: 28px; }
+  .aviso-icono { font-size: 20px; flex-shrink: 0; }
+  .aviso-titulo { font-size: 13px; font-weight: 700; color: var(--naranja); margin-bottom: 3px; }
+  .aviso-texto { font-size: 13px; color: var(--gris-medio); line-height: 1.5; }
+
+  /* Footer */
+  .page-footer { border-top: 1px solid var(--gris-borde); background: #fff; padding: 20px 32px; }
+  .footer-inner { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--gris-medio); flex-wrap: wrap; gap: 8px; }
+
+  /* Sin resultados */
+  .sin-resultados { display: none; text-align: center; padding: 40px; color: var(--gris-medio); font-size: 14px; }
+
+  @media (max-width: 640px) {
+    .topbar { padding: 0 16px; }
+    .hero { padding: 24px 16px; }
+    .hero-inner { flex-direction: column; }
+    .hero-badge { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; }
+    .main { padding: 20px 16px 48px; }
+    .search-bar { padding: 12px 16px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .secciones-grid { grid-template-columns: 1fr 1fr; }
+    .page-footer { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-circle">IC</div>
+    <div>
+      <div class="logo-text">Industrial Corona de México</div>
+      <div class="logo-sub">Sistema de Gestión Integral</div>
+    </div>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-info">
+    <div>Portal interno · Solo @icorona.mx</div>
+    <div>Última actualización: Jun 2026</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Portal de manuales internos</div>
+      <div class="hero-title">Manuales de procedimientos<br>de Industrial Corona de México</div>
+      <div class="hero-desc">Consulta los manuales del Sistema de Gestión Integral en formato interactivo. Encuentra rápidamente los procedimientos, criterios y responsabilidades que necesitas.</div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">11</div><div class="stat-label">Secciones disponibles</div></div>
+        <div class="stat"><div class="stat-num">Rev. 12</div><div class="stat-label">Versión actual MCM-01-G</div></div>
+        <div class="stat"><div class="stat-num">Jun 2026</div><div class="stat-label">Última actualización</div></div>
+      </div>
+    </div>
+    <div class="hero-badge">
+      <div class="hero-badge-icon">✅</div>
+      <div class="hero-badge-texto">Alineado a<br>AIAG · ISO 9001<br>IATF 16949</div>
+    </div>
+  </div>
+</div>
+
+<!-- BUSCADOR -->
+<div class="search-bar">
+  <div class="search-inner">
+    <input type="text" class="search-input" id="buscador" placeholder="Buscar sección, tema o código de formato..." oninput="filtrar()" />
+    <select class="filter-sel" id="filtro-area" onchange="filtrar()">
+      <option value="">Todas las áreas</option>
+      <option value="compras">Compras</option>
+      <option value="calidad">Calidad</option>
+      <option value="seguridad">Seguridad</option>
+      <option value="logistica">Logística</option>
+    </select>
+  </div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="main">
+
+  <div class="aviso">
+    <div class="aviso-icono">🔒</div>
+    <div>
+      <div class="aviso-titulo">Acceso restringido al personal ICM</div>
+      <div class="aviso-texto">Este portal es de uso exclusivo interno. El contenido está actualizado a la revisión vigente de cada manual. Para reportar errores o solicitar actualizaciones, contacta al área de Calidad.</div>
+    </div>
+  </div>
+
+  <!-- Manuales disponibles -->
+  <div class="seccion-titulo" id="titulo-manuales">Manuales disponibles</div>
+  <div class="cards-grid" id="cards-manuales">
+
+    <a href="icm-portal-inicio.html" class="card" data-area="compras calidad logistica" data-texto="mcm-01-g proveedores directos resina empaque compras calidad no conformidades evaluacion generalidades ppap cambios trazabilidad empaque inspeccion facturacion pago recibo sgc auditorias">
+      <div class="card-top">
+        <div class="card-icono" style="background:var(--naranja-suave);">📦</div>
+        <div class="card-badges">
+          <span class="card-tag tag-nuevo">Completo</span>
+        </div>
+      </div>
+      <div class="card-codigo">MCM-01-G · Rev. 12</div>
+      <div class="card-titulo">Manual de Requerimientos a Proveedores Directos</div>
+      <div class="card-desc">Requisitos de calidad, ambiental, PPAP, evaluación mensual y lineamientos para proveedores de insumos directos de ICM.</div>
+      <div class="card-footer">
+        <span class="card-meta">Área: Compras · Jun 2026</span>
+        <span class="card-secciones">11 secciones disponibles →</span>
+      </div>
+    </a>
+
+    <div class="card card-deshabilitado" data-area="calidad" data-texto="manual calidad procedimientos internos">
+      <div class="card-top">
+        <div class="card-icono" style="background:var(--morado-suave);">🔬</div>
+        <div class="card-badges">
+          <span class="card-tag tag-proximamente">Próximamente</span>
+        </div>
+      </div>
+      <div class="card-codigo">PCA-01-C</div>
+      <div class="card-titulo">Procedimiento de Inspección, Recibo, Proceso y Final</div>
+      <div class="card-desc">Lineamientos de inspección de materiales en recibo, proceso de producción y producto terminado.</div>
+      <div class="card-footer">
+        <span class="card-meta">Área: Calidad</span>
+        <span class="card-secciones">En preparación</span>
+      </div>
+    </div>
+
+    <div class="card card-deshabilitado" data-area="seguridad" data-texto="seguridad higiene medio ambiente lineamientos epp">
+      <div class="card-top">
+        <div class="card-icono" style="background:var(--amarillo-suave);">⛑️</div>
+        <div class="card-badges">
+          <span class="card-tag tag-proximamente">Próximamente</span>
+        </div>
+      </div>
+      <div class="card-codigo">PSH-01</div>
+      <div class="card-titulo">Manual de Seguridad, Higiene y Medio Ambiente</div>
+      <div class="card-desc">EPP requerido, lineamientos de ingreso a planta, manejo de residuos y normatividad ambiental aplicable.</div>
+      <div class="card-footer">
+        <span class="card-meta">Área: Seg. Hig. y MA</span>
+        <span class="card-secciones">En preparación</span>
+      </div>
+    </div>
+
+    <div class="card card-deshabilitado" data-area="logistica" data-texto="logistica sac materiales administracion materia prima">
+      <div class="card-top">
+        <div class="card-icono" style="background:var(--azul-suave);">🚚</div>
+        <div class="card-badges">
+          <span class="card-tag tag-proximamente">Próximamente</span>
+        </div>
+      </div>
+      <div class="card-codigo">PMP-01-C</div>
+      <div class="card-titulo">Procedimiento de Administración de Materia Prima</div>
+      <div class="card-desc">Control de inventarios, recibo de materiales, trazabilidad de lotes y gestión de almacén.</div>
+      <div class="card-footer">
+        <span class="card-meta">Área: SAC y Logística</span>
+        <span class="card-secciones">En preparación</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sin-resultados" id="sin-resultados">
+    <div style="font-size:32px; margin-bottom:10px;">🔍</div>
+    No se encontraron manuales que coincidan con tu búsqueda.
+  </div>
+
+  <!-- Secciones del MCM-01-G -->
+  <div class="seccion-titulo" id="titulo-secciones">MCM-01-G · Secciones disponibles</div>
+  <div class="secciones-grid" id="secciones-mcm">
+
+    <a href="icm-seccion-8-generalidades.html" class="sec-item" data-texto="generalidades documentos requeridos ppap iso certificado difusion proveedor resina empaque calibracion moldes">
+      <div class="sec-item-num">Sección 8</div>
+      <div class="sec-item-titulo">Generalidades y documentos requeridos</div>
+      <div class="sec-item-estado"><span class="dot-verde"></span><span style="font-size:11px;color:var(--verde);font-weight:600;">Disponible</span></div>
+    </a>
+
+    <a href="icm-seccion-9-8-no-conformidades.html" class="sec-item" data-texto="no conformidades rmnc 8d causa raiz cuarentena escalacion material defectuoso rechazo">
+      <div class="sec-item-num">Sección 9.8</div>
+      <div class="sec-item-titulo">No conformidades</div>
+      <div class="sec-item-estado"><span class="dot-verde"></span><span style="font-size:11px;color:var(--verde);font-weight:600;">Disponible</span></div>
+    </a>
+
+    <a href="icm-seccion-9-11-evaluacion-proveedores.html" class="sec-item" data-texto="evaluacion proveedores ppm clasificacion abc mensual trimestral desempeño criterios empaque insumos directos">
+      <div class="sec-item-num">Sección 9.11</div>
+      <div class="sec-item-titulo">Evaluación a proveedores</div>
+      <div class="sec-item-estado"><span class="dot-verde"></span><span style="font-size:11px;color:var(--verde);font-weight:600;">Disponible</span></div>
+    </a>
+
+    <a href="icm-seccion-9-1-9-2-sgc-auditorias.html" class="sec-item" data-texto="sistema gestion calidad iso iatf autoevaluacion auditorias visitas instalaciones proveedor plan anual">
+      <div class="sec-item-num">Sección 9.1 · 9.2</div>
+      <div class="sec-item-titulo">SGC y Auditorías</div>
+      <div class="sec-item-estado"><span class="dot-verde"></span><span style="font-size:11px;color:var(--verde);font-weight:600;">Disponible</span></div>
+    </a>
+
+    <a href="icm-seccion-9-3-ppap.html" class="sec-item" data-texto="ppap especificaciones producto aprobacion partes produccion nivel 1 aiag psw flamabilidad">
+      <div class="sec-item-num">Sección 9.3</div>
+      <div class="sec-item-titulo">PPAP — Especificaciones del producto</div>
+      <div class="sec-item-estado"><span class="dot-verde"></span><span style="font-size:11px;color:var(--verde);font-weight:600;">Disponible</span></div>
+    </a>
+
+    <a href="icm-seccion-9-5-9-7-cambios-trazabilidad.html" class="sec-item" data-texto="notificacion cambios razon social instalaciones marca trazabilidad lotes identificacion producto numero lote">
+      <div class="sec-item-num">Sección 9.5 · 9.7</div>
+      <div class="sec-item-titulo">Notificación de cambios y trazabilidad</div>
+      <div class="sec-item-estado"><span class="dot-verde"></span><span style="font-size:11px;color:var(--verde);font-weight:600;">Disponible</span></div>
+    </a>
+
+    <a href="icm-seccion-9-9-9-10-empaque-inspeccion.html" class="sec-item" data-texto="empaque norma condiciones manejo cambio consentimiento inspeccion recibo resinas certificado calidad daño fisico">
+      <div class="sec-item-num">Sección 9.9 · 9.10</div>
+      <div class="sec-item-titulo">Empaque e inspección de recibo</div>
+      <div class="sec-item-estado"><span class="dot-verde"></span><span style="font-size:11px;color:var(--verde);font-weight:600;">Disponible</span></div>
+    </a>
+
+    <a href="icm-seccion-9-12-9-13-9-14-facturacion-recibo-pago.html" class="sec-item" data-texto="facturacion orden compra remision pago portal proveedores viernes recibo materiales bodega horario transporte aceite condiciones comerciales credito 30 dias">
+      <div class="sec-item-num">Sección 9.12 · 9.13 · 9.14</div>
+      <div class="sec-item-titulo">Facturación, recibo y condiciones de pago</div>
+      <div class="sec-item-estado"><span class="dot-verde"></span><span style="font-size:11px;color:var(--verde);font-weight:600;">Disponible</span></div>
+    </a>
+
+    <div class="sec-item" style="opacity:0.5; cursor:default;" data-texto="seguridad ambiental lineamientos ingreso proveedores epp visitas">
+      <div class="sec-item-num">Sección 9.15</div>
+      <div class="sec-item-titulo">Lineamientos de seguridad y ambiental</div>
+      <div class="sec-item-estado"><span class="dot-gris"></span><span style="font-size:11px;color:var(--gris-medio);">Próximamente</span></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <div class="footer-inner">
+    <span>© 2026 Industrial Corona de México S.A. de C.V. · Sistema de Gestión Integral</span>
+    <span>Uso exclusivo interno · Acceso restringido a personal @icorona.mx</span>
+  </div>
+</div>
+
+<script>
+function filtrar() {
+  const q = document.getElementById('buscador').value.toLowerCase().trim();
+  const area = document.getElementById('filtro-area').value.toLowerCase();
+
+  const cards = document.querySelectorAll('#cards-manuales .card');
+  const secs = document.querySelectorAll('#secciones-mcm .sec-item');
+  let visiblesCards = 0;
+
+  cards.forEach(c => {
+    const texto = (c.dataset.texto || '').toLowerCase();
+    const areaCard = (c.dataset.area || '').toLowerCase();
+    const matchQ = !q || texto.includes(q);
+    const matchA = !area || areaCard.includes(area);
+    const visible = matchQ && matchA;
+    c.style.display = visible ? '' : 'none';
+    if (visible) visiblesCards++;
+  });
+
+  secs.forEach(s => {
+    const texto = (s.dataset.texto || '').toLowerCase();
+    s.style.display = (!q || texto.includes(q)) ? '' : 'none';
+  });
+
+  document.getElementById('sin-resultados').style.display = visiblesCards === 0 ? 'block' : 'none';
+  document.getElementById('titulo-manuales').style.display = visiblesCards === 0 ? 'none' : '';
+}
+</script>
+
+</body>
+</html>

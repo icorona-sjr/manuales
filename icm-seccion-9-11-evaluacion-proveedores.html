@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9.11 Evaluación a Proveedores — ICM</title>
+<style>
+  :root {
+    --naranja: #D85A20;
+    --naranja-suave: #FDF0EA;
+    --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A;
+    --gris-medio: #5F5E5A;
+    --gris-suave: #F1EFE8;
+    --gris-borde: #D3D1C7;
+    --verde: #3B6D11;
+    --verde-suave: #EAF3DE;
+    --verde-borde: #C0DD97;
+    --rojo: #A32D2D;
+    --rojo-suave: #FCEBEB;
+    --rojo-borde: #F7C1C1;
+    --amarillo: #854F0B;
+    --amarillo-suave: #FAEEDA;
+    --amarillo-borde: #FAC775;
+    --azul: #185FA5;
+    --azul-suave: #E6F1FB;
+    --azul-borde: #85B7EB;
+    --radius: 8px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
+
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .header-bar .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-bar .titulo { font-size: 15px; font-weight: 600; color: #fff; }
+  .header-bar .sep { color: rgba(255,255,255,0.4); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .proc-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--gris-borde); }
+  .proc-icono { width: 52px; height: 52px; border-radius: 12px; background: var(--azul-suave); border: 1px solid var(--azul-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; }
+  .proc-titulo { font-size: 22px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .proc-sub { font-size: 14px; color: var(--gris-medio); }
+  .proc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .section { margin-bottom: 28px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--naranja); margin-bottom: 10px; }
+  .divider { height: 1px; background: var(--gris-borde); margin: 28px 0; }
+
+  /* Clasificación */
+  .clasif-grid { display: flex; flex-direction: column; gap: 8px; }
+  .clasif-row { display: flex; align-items: center; gap: 14px; border-radius: var(--radius); padding: 13px 16px; border: 1px solid; }
+  .clasif-a { background: var(--verde-suave); border-color: var(--verde-borde); }
+  .clasif-b { background: var(--azul-suave); border-color: var(--azul-borde); }
+  .clasif-c { background: var(--amarillo-suave); border-color: var(--amarillo-borde); }
+  .clasif-d { background: var(--rojo-suave); border-color: var(--rojo-borde); }
+  .clasif-letra { font-size: 24px; font-weight: 800; min-width: 28px; }
+  .la { color: var(--verde); } .lb { color: var(--azul); } .lc { color: var(--amarillo); } .ld { color: var(--rojo); }
+  .clasif-pct { font-size: 13px; font-weight: 600; min-width: 74px; }
+  .clasif-desc { flex: 1; }
+  .clasif-title { font-size: 13px; font-weight: 600; }
+  .clasif-sub { font-size: 12px; margin-top: 2px; line-height: 1.4; opacity: 0.85; }
+  .clasif-accion { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: rgba(255,255,255,0.55); white-space: nowrap; border: 1px solid rgba(0,0,0,0.08); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tab { font-size: 13px; padding: 7px 16px; border-radius: 20px; border: 1px solid var(--gris-borde); background: var(--gris-suave); color: var(--gris-medio); cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+  .tab:hover { border-color: var(--naranja); color: var(--naranja); }
+  .tab.active { background: var(--naranja); border-color: var(--naranja); color: #fff; font-weight: 600; }
+
+  /* Tabla criterios */
+  .criterios { border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; }
+  .panel-content { display: none; }
+  .panel-content.active { display: block; }
+  .crit-header { display: grid; grid-template-columns: 1fr 76px 76px 76px; background: var(--gris-suave); border-bottom: 1px solid var(--gris-borde); }
+  .crit-hcell { font-size: 11px; font-weight: 700; color: var(--gris-medio); padding: 9px 12px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
+  .crit-hcell:first-child { text-align: left; }
+  .crit-group { border-bottom: 1px solid var(--gris-borde); }
+  .crit-group:last-child { border-bottom: none; }
+  .crit-group-title { font-size: 12px; font-weight: 700; color: var(--gris-oscuro); padding: 9px 12px 5px; background: #fafaf8; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--gris-borde); }
+  .crit-row { display: grid; grid-template-columns: 1fr 76px 76px 76px; }
+  .crit-desc { font-size: 13px; color: var(--gris-medio); padding: 8px 12px; line-height: 1.45; }
+  .crit-val { font-size: 13px; font-weight: 700; padding: 8px 12px; text-align: center; display: flex; align-items: center; justify-content: center; }
+  .cv-good { color: var(--verde); }
+  .cv-mid { color: var(--amarillo); }
+  .cv-zero { color: var(--rojo); }
+  .crit-total { display: grid; grid-template-columns: 1fr 76px 76px 76px; background: var(--gris-suave); border-top: 1px solid var(--gris-borde); }
+  .crit-total-label { font-size: 13px; font-weight: 700; padding: 10px 12px; color: var(--gris-oscuro); }
+  .crit-total-val { font-size: 15px; font-weight: 800; padding: 10px 12px; text-align: center; display: flex; align-items: center; justify-content: center; color: var(--verde); }
+
+  .tip { background: var(--amarillo-suave); border: 1px solid var(--amarillo-borde); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--amarillo); margin-top: 12px; }
+  .info { background: var(--azul-suave); border: 1px solid var(--azul-borde); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--azul); margin-top: 10px; }
+  .nota-na { font-size: 12px; color: var(--gris-medio); font-style: italic; padding: 8px 12px; }
+
+  /* Consecuencias */
+  .consecuencias { display: flex; flex-direction: column; gap: 8px; }
+  .cons-row { display: flex; gap: 12px; background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 13px 14px; }
+  .cons-icono { font-size: 18px; flex-shrink: 0; }
+  .cons-texto { font-size: 13px; color: var(--gris-medio); line-height: 1.55; }
+  .cons-texto strong { font-weight: 600; color: var(--gris-oscuro); }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--gris-medio); }
+
+  @media (max-width: 600px) {
+    .clasif-accion { display: none; }
+    .proc-icono { display: none; }
+    .crit-header, .crit-row, .crit-total { grid-template-columns: 1fr 60px 60px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <span class="codigo">MCM-01-G</span>
+  <span class="sep">›</span>
+  <span class="titulo">9.11 Evaluación a Proveedores</span>
+</div>
+
+<div class="container">
+
+  <div class="proc-header">
+    <div class="proc-icono">📊</div>
+    <div>
+      <div class="proc-titulo">9.11 Evaluación a proveedores</div>
+      <div class="proc-sub">Criterios de desempeño mensual y clasificación</div>
+      <div class="proc-meta">
+        <span class="badge">Evaluación trimestral</span>
+        <span class="badge">Formato FPCM-01-03</span>
+        <span class="badge">Analista de Materiales</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Escala de clasificación</div>
+    <div class="clasif-grid">
+      <div class="clasif-row clasif-a">
+        <div class="clasif-letra la">A</div>
+        <div class="clasif-pct la">98 – 100%</div>
+        <div class="clasif-desc">
+          <div class="clasif-title la">Excelente — cumple con la expectativa</div>
+          <div class="clasif-sub la">Solo se requiere mantener la mejora continua.</div>
+        </div>
+        <div class="clasif-accion la">Reconocimiento anual</div>
+      </div>
+      <div class="clasif-row clasif-b">
+        <div class="clasif-letra lb">B</div>
+        <div class="clasif-pct lb">90 – 97%</div>
+        <div class="clasif-desc">
+          <div class="clasif-title lb">Buena calidad — cumple con la expectativa</div>
+          <div class="clasif-sub lb">Problemas poco frecuentes y no recurrentes.</div>
+        </div>
+        <div class="clasif-accion lb">Plan de acciones</div>
+      </div>
+      <div class="clasif-row clasif-c">
+        <div class="clasif-letra lc">C</div>
+        <div class="clasif-pct lc">80 – 89%</div>
+        <div class="clasif-desc">
+          <div class="clasif-title lc">Regular — marginalmente cumple</div>
+          <div class="clasif-sub lc">Se solicitan acciones correctivas y evidencias.</div>
+        </div>
+        <div class="clasif-accion lc">8D's + auditoría</div>
+      </div>
+      <div class="clasif-row clasif-d">
+        <div class="clasif-letra ld">D</div>
+        <div class="clasif-pct ld">&lt; 79%</div>
+        <div class="clasif-desc">
+          <div class="clasif-title ld">Calidad inaceptable — no cumple</div>
+          <div class="clasif-sub ld">Acciones correctivas inmediatas. Se programa auditoría de seguimiento.</div>
+        </div>
+        <div class="clasif-accion ld">Auditoría inmediata</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Criterios de evaluación mensual</div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('directos', this)">Insumos directos</button>
+      <button class="tab" onclick="switchTab('empaque', this)">Material de empaque</button>
+      <button class="tab" onclick="switchTab('cliente', this)">Cliente-proveedor</button>
+    </div>
+
+    <!-- INSUMOS DIRECTOS -->
+    <div id="tab-directos" class="panel-content active">
+      <div class="criterios">
+        <div class="crit-header">
+          <div class="crit-hcell">Criterio</div>
+          <div class="crit-hcell">0 incid.</div>
+          <div class="crit-hcell">1 incid.</div>
+          <div class="crit-hcell">2+ incid.</div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">📦 Condiciones de empaque</div>
+          <div class="crit-row">
+            <div class="crit-desc">Empaque dañado o identificación incorrecta</div>
+            <div class="crit-val cv-good">10%</div><div class="crit-val cv-mid">5%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">🧾 Documentación</div>
+          <div class="crit-row">
+            <div class="crit-desc">Factura / remisión y orden de compra</div>
+            <div class="crit-val cv-good">20%</div><div class="crit-val cv-mid">10%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">🚚 Cumplimiento a entrega</div>
+          <div class="crit-row">
+            <div class="crit-desc">Fecha y cantidad requerida (flete extra = 0%)</div>
+            <div class="crit-val cv-good">20%</div><div class="crit-val cv-mid">10%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">📋 Certificado de calidad</div>
+          <div class="crit-row">
+            <div class="crit-desc">Entrega del CC en tiempo y forma</div>
+            <div class="crit-val cv-good">20%</div><div class="crit-val cv-mid">10%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">❌ Rechazos de calidad (RMNC + 8D's)</div>
+          <div class="crit-row">
+            <div class="crit-desc">RMNC (reincidencia o 2+ = 0%)</div>
+            <div class="crit-val cv-good">15%</div><div class="crit-val cv-mid">10%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">📈 PPM's</div>
+          <div class="crit-row">
+            <div class="crit-desc">&lt;50 ppm = 15% · 50–100 = 10% · 100–300 = 5% · +300 = 0%</div>
+            <div class="crit-val cv-good">15%</div><div class="crit-val cv-mid">—</div><div class="crit-val cv-zero">—</div>
+          </div>
+        </div>
+        <div class="crit-total">
+          <div class="crit-total-label">Total posible</div>
+          <div class="crit-total-val">100%</div>
+          <div></div><div></div>
+        </div>
+      </div>
+      <div class="tip">⚠️ Se descuenta 5% adicional si hay falta de entrega de PPAP, IMDS, REACH & RoHS, Conflicto de Minerales o Proposición 65 solicitados por el cliente.</div>
+    </div>
+
+    <!-- MATERIAL DE EMPAQUE -->
+    <div id="tab-empaque" class="panel-content">
+      <div class="criterios">
+        <div class="crit-header">
+          <div class="crit-hcell">Criterio</div>
+          <div class="crit-hcell">0 incid.</div>
+          <div class="crit-hcell">1 incid.</div>
+          <div class="crit-hcell">2+ incid.</div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">📦 Condiciones de empaque</div>
+          <div class="crit-row">
+            <div class="crit-desc">Empaque dañado o identificación incorrecta</div>
+            <div class="crit-val cv-good">20%</div><div class="crit-val cv-mid">10%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">🧾 Documentación</div>
+          <div class="crit-row">
+            <div class="crit-desc">Factura / remisión y orden de compra</div>
+            <div class="crit-val cv-good">20%</div><div class="crit-val cv-mid">10%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">🚚 Cumplimiento a entrega</div>
+          <div class="crit-row">
+            <div class="crit-desc">Fecha y cantidad requerida</div>
+            <div class="crit-val cv-good">30%</div><div class="crit-val cv-mid">15%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">❌ Rechazos de calidad (RMNC)</div>
+          <div class="crit-row">
+            <div class="crit-desc">RMNC (reincidencia = 5%, 2+ = 0%)</div>
+            <div class="crit-val cv-good">30%</div><div class="crit-val cv-mid">15%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="nota-na">Certificado de calidad y PPM's: no aplica para proveedores de material de empaque.</div>
+        <div class="crit-total">
+          <div class="crit-total-label">Total posible</div>
+          <div class="crit-total-val">100%</div>
+          <div></div><div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTE-PROVEEDOR -->
+    <div id="tab-cliente" class="panel-content">
+      <div class="criterios">
+        <div class="crit-header">
+          <div class="crit-hcell">Criterio</div>
+          <div class="crit-hcell">0 incid.</div>
+          <div class="crit-hcell">1 incid.</div>
+          <div class="crit-hcell">2+ incid.</div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">📦 Condiciones de empaque</div>
+          <div class="crit-row">
+            <div class="crit-desc">Empaque dañado o identificación incorrecta</div>
+            <div class="crit-val cv-good">20%</div><div class="crit-val cv-mid">10%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">🧾 Documentación</div>
+          <div class="crit-row">
+            <div class="crit-desc">Factura / remisión y orden de compra</div>
+            <div class="crit-val cv-good">30%</div><div class="crit-val cv-mid">20%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">🚚 Cumplimiento a entrega</div>
+          <div class="crit-row">
+            <div class="crit-desc">Fecha y cantidad (flete extra = 0%)</div>
+            <div class="crit-val cv-good">50%</div><div class="crit-val cv-mid">30%</div><div class="crit-val cv-zero">10%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">❌ Rechazos de calidad</div>
+          <div class="crit-row">
+            <div class="crit-desc">RMNC (2+ = 0%)</div>
+            <div class="crit-val cv-good">15%</div><div class="crit-val cv-mid">10%</div><div class="crit-val cv-zero">0%</div>
+          </div>
+        </div>
+        <div class="crit-group">
+          <div class="crit-group-title">📈 PPM's</div>
+          <div class="crit-row">
+            <div class="crit-desc">&lt;50 = 15% · 50–100 = 10% · 100–300 = 5% · +300 = 0%</div>
+            <div class="crit-val cv-good">15%</div><div class="crit-val cv-mid">—</div><div class="crit-val cv-zero">—</div>
+          </div>
+        </div>
+        <div class="crit-total">
+          <div class="crit-total-label">Total posible</div>
+          <div class="crit-total-val">100%</div>
+          <div></div><div></div>
+        </div>
+      </div>
+      <div class="tip">⚠️ Se descuenta 5% adicional por falta de entrega de PPAP, IMDS, REACH & RoHS, Conflicto de Minerales o Proposición 65.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">¿Qué pasa según tu calificación?</div>
+    <div class="consecuencias">
+      <div class="cons-row">
+        <span class="cons-icono">🔔</span>
+        <div class="cons-texto"><strong>Si bajas de 97% en un mes:</strong> ICM te notifica y debes entregar un plan de mejora en máx. 15 días hábiles.</div>
+      </div>
+      <div class="cons-row">
+        <span class="cons-icono">⚠️</span>
+        <div class="cons-texto"><strong>Si bajas de 89% dos meses consecutivos:</strong> ICM solicita plan de acciones correctivas en máx. 15 días hábiles y puede convocar a una junta presencial.</div>
+      </div>
+      <div class="cons-row">
+        <span class="cons-icono">⭐</span>
+        <div class="cons-texto"><strong>Cada enero:</strong> ICM identifica a los mejores proveedores del año y envía un reconocimiento formal por su desempeño.</div>
+      </div>
+    </div>
+    <div class="info">📤 Los resultados de la evaluación (formato FPCM-01-03) se envían trimestralmente en los primeros 10 días hábiles del trimestre.</div>
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id, el) {
+  document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

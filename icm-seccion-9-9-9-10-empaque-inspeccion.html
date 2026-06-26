@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9.9 Empaque · 9.10 Inspección de recibo — ICM</title>
+<style>
+  :root {
+    --naranja: #D85A20; --naranja-suave: #FDF0EA; --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A; --gris-medio: #5F5E5A; --gris-suave: #F1EFE8; --gris-borde: #D3D1C7;
+    --verde: #3B6D11; --verde-suave: #EAF3DE; --verde-borde: #C0DD97;
+    --rojo: #A32D2D; --rojo-suave: #FCEBEB; --rojo-borde: #F7C1C1;
+    --amarillo: #854F0B; --amarillo-suave: #FAEEDA; --amarillo-borde: #FAC775;
+    --azul: #185FA5; --azul-suave: #E6F1FB; --azul-borde: #85B7EB;
+    --radius: 8px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
+
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+  .titulo-h { font-size: 15px; font-weight: 600; color: #fff; }
+  .sep { color: rgba(255,255,255,0.4); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .proc-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--gris-borde); }
+  .proc-icono { width: 52px; height: 52px; border-radius: 12px; background: var(--azul-suave); border: 1px solid var(--azul-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; }
+  .proc-titulo { font-size: 22px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .proc-sub { font-size: 14px; color: var(--gris-medio); }
+  .proc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .section { margin-bottom: 28px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--naranja); margin-bottom: 12px; }
+  .divider { height: 1px; background: var(--gris-borde); margin: 28px 0; }
+
+  .info { background: var(--azul-suave); border: 1px solid var(--azul-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--azul); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+  .warn { background: var(--amarillo-suave); border: 1px solid var(--amarillo-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--amarillo); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+  .success { background: var(--verde-suave); border: 1px solid var(--verde-borde); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--verde); display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; }
+
+  .empaque-cards { display: flex; flex-direction: column; gap: 8px; }
+  .empaque-card { display: flex; gap: 14px; align-items: flex-start; background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px; }
+  .empaque-icono { width: 38px; height: 38px; border-radius: var(--radius); background: var(--azul-suave); border: 1px solid var(--azul-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+  .empaque-titulo { font-size: 14px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 3px; }
+  .empaque-desc { font-size: 13px; color: var(--gris-medio); line-height: 1.5; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tab { font-size: 13px; padding: 7px 16px; border-radius: 20px; border: 1px solid var(--gris-borde); background: var(--gris-suave); color: var(--gris-medio); cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+  .tab:hover { border-color: var(--naranja); color: var(--naranja); }
+  .tab.active { background: var(--azul-suave); border-color: var(--azul-borde); color: var(--azul); font-weight: 600; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .insp-table { width: 100%; border: 1px solid var(--gris-borde); border-radius: var(--radius); overflow: hidden; }
+  .insp-thead { display: grid; grid-template-columns: 1.2fr 1.8fr 1fr; background: var(--gris-suave); border-bottom: 1px solid var(--gris-borde); }
+  .insp-th { font-size: 11px; font-weight: 700; color: var(--gris-medio); padding: 9px 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .insp-row { display: grid; grid-template-columns: 1.2fr 1.8fr 1fr; border-bottom: 1px solid var(--gris-borde); }
+  .insp-row:last-child { border-bottom: none; }
+  .insp-cell { font-size: 13px; color: var(--gris-medio); padding: 11px 12px; line-height: 1.4; display: flex; align-items: center; }
+  .insp-cell:first-child { font-weight: 600; color: var(--gris-oscuro); }
+  .pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .pill-si { background: var(--verde-suave); color: var(--verde); border: 1px solid var(--verde-borde); }
+  .pill-no { background: var(--gris-suave); color: var(--gris-medio); border: 1px solid var(--gris-borde); }
+  .pill-alm { background: var(--azul-suave); color: var(--azul); border: 1px solid var(--azul-borde); }
+
+  .steps { display: flex; flex-direction: column; }
+  .step { display: flex; gap: 16px; }
+  .step-left { display: flex; flex-direction: column; align-items: center; }
+  .step-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--naranja-suave); border: 2px solid var(--naranja); color: var(--naranja); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-line { width: 2px; flex: 1; background: var(--gris-borde); margin: 4px 0; min-height: 12px; }
+  .step:last-child .step-line { display: none; }
+  .step-body { padding-bottom: 20px; flex: 1; padding-top: 4px; }
+  .step-titulo { font-size: 15px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .step-desc { font-size: 14px; color: var(--gris-medio); line-height: 1.6; }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; font-size: 12px; color: var(--gris-medio); flex-wrap: wrap; gap: 6px; }
+
+  @media (max-width: 600px) {
+    .proc-icono { display: none; }
+    .insp-thead, .insp-row { grid-template-columns: 1fr 1.5fr 0.8fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <span class="codigo">MCM-01-G</span>
+  <span class="sep">›</span>
+  <span class="titulo-h">9.9 Empaque · 9.10 Inspección de recibo</span>
+</div>
+
+<div class="container">
+
+  <div class="proc-header">
+    <div class="proc-icono">📦</div>
+    <div>
+      <div class="proc-titulo">9.9 Empaque · 9.10 Inspección de recibo</div>
+      <div class="proc-sub">Requisitos de empaque y qué revisa ICM al recibir los materiales</div>
+      <div class="proc-meta">
+        <span class="badge">Almacén ICM</span>
+        <span class="badge">Calidad ICM</span>
+        <span class="badge">Ref. PCA-01-C · PMP-01-C</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">9.9 — Requisitos de empaque</div>
+    <div class="empaque-cards">
+      <div class="empaque-card">
+        <div class="empaque-icono">🛡️</div>
+        <div>
+          <div class="empaque-titulo">El empaque debe proteger el producto</div>
+          <div class="empaque-desc">El material debe llegar en óptimas condiciones. El empaque debe resistir el manejo durante transporte y almacenamiento sin que el producto sufra daños.</div>
+        </div>
+      </div>
+      <div class="empaque-card">
+        <div class="empaque-icono">📄</div>
+        <div>
+          <div class="empaque-titulo">Norma de empaque definida por ICM</div>
+          <div class="empaque-desc">El proveedor debe seguir la norma de empaque establecida por ICM para cada material. Cualquier desviación impacta el proceso de recibo y almacenamiento.</div>
+        </div>
+      </div>
+      <div class="empaque-card">
+        <div class="empaque-icono">✋</div>
+        <div>
+          <div class="empaque-titulo">Cambios de empaque requieren autorización previa</div>
+          <div class="empaque-desc">Cualquier modificación al tipo, dimensiones o materiales del empaque debe contar con el consentimiento previo de ICM por escrito antes de implementarse.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">9.10 — ¿Qué revisa ICM al recibir el material?</div>
+    <div class="tabs">
+      <button class="tab active" onclick="st('resinas', this)">Resinas</button>
+      <button class="tab" onclick="st('empaque', this)">Material de empaque</button>
+      <button class="tab" onclick="st('indirecto', this)">Proveedor indirecto</button>
+    </div>
+
+    <div id="tab-resinas" class="panel active">
+      <div class="insp-table">
+        <div class="insp-thead">
+          <div class="insp-th">Qué se revisa</div>
+          <div class="insp-th">Descripción</div>
+          <div class="insp-th">¿Se inspecciona?</div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Tipo de producto</div>
+          <div class="insp-cell">Confirmar que el material coincide con lo ordenado en la OC</div>
+          <div class="insp-cell"><span class="pill pill-si">Sí</span></div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Cantidad</div>
+          <div class="insp-cell">Verificar que la cantidad entregada corresponde a la orden de compra</div>
+          <div class="insp-cell"><span class="pill pill-si">Sí</span></div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Daño físico</div>
+          <div class="insp-cell">Revisar que el empaque no presente golpes, perforaciones o daños visibles</div>
+          <div class="insp-cell"><span class="pill pill-si">Sí</span></div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Certificado de calidad</div>
+          <div class="insp-cell">Debe acompañar cada entrega. Se revisa conforme a PCA-01-C y PMP-01-C</div>
+          <div class="insp-cell"><span class="pill pill-si">Sí</span></div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Especificaciones técnicas</div>
+          <div class="insp-cell">ICM no realiza inspección técnica en recibo — confía en el certificado del proveedor</div>
+          <div class="insp-cell"><span class="pill pill-no">No en recibo</span></div>
+        </div>
+      </div>
+      <div class="success">✅ ICM espera recibir materiales dentro de especificación. El certificado de calidad es obligatorio en cada entrega de resina.</div>
+    </div>
+
+    <div id="tab-empaque" class="panel">
+      <div class="insp-table">
+        <div class="insp-thead">
+          <div class="insp-th">Qué se revisa</div>
+          <div class="insp-th">Descripción</div>
+          <div class="insp-th">¿Se inspecciona?</div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Dimensiones</div>
+          <div class="insp-cell">Verificar que las medidas cumplen con las especificaciones requeridas por ICM</div>
+          <div class="insp-cell"><span class="pill pill-si">Sí</span></div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Cantidad</div>
+          <div class="insp-cell">Confirmar que la cantidad entregada corresponde a la orden de compra</div>
+          <div class="insp-cell"><span class="pill pill-si">Sí</span></div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Daño físico</div>
+          <div class="insp-cell">Revisar que el material no presente daños que comprometan su uso en producción</div>
+          <div class="insp-cell"><span class="pill pill-si">Sí</span></div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Certificado de calidad</div>
+          <div class="insp-cell">No se requiere certificado de calidad para material de empaque</div>
+          <div class="insp-cell"><span class="pill pill-no">No aplica</span></div>
+        </div>
+      </div>
+      <div class="info">ℹ️ Los empaques suministrados directamente por el cliente de ICM quedan excluidos de este proceso de recibo.</div>
+    </div>
+
+    <div id="tab-indirecto" class="panel">
+      <div class="insp-table">
+        <div class="insp-thead">
+          <div class="insp-th">Qué se revisa</div>
+          <div class="insp-th">Descripción</div>
+          <div class="insp-th">¿Se inspecciona?</div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Recepción general</div>
+          <div class="insp-cell">Los materiales son recibidos directamente por el área de almacén de ICM</div>
+          <div class="insp-cell"><span class="pill pill-alm">Almacén</span></div>
+        </div>
+        <div class="insp-row">
+          <div class="insp-cell">Documentación</div>
+          <div class="insp-cell">Factura, remisión y orden de compra deben acompañar la entrega</div>
+          <div class="insp-cell"><span class="pill pill-si">Sí</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Si se detecta una no conformidad en recibo</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Se detecta anomalía durante la inspección</div>
+          <div class="step-desc">El material presenta una condición fuera de especificación, daño físico o documentación incompleta al momento de la recepción.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-body">
+          <div class="step-titulo">Se aplica el apartado 9.8 No conformidades</div>
+          <div class="step-desc">El material se coloca en área de cuarentena y se notifica al proveedor mediante el formato FPCA-02-08. Se inicia el proceso de acciones correctivas.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div></div>
+        <div class="step-body">
+          <div class="step-titulo">El proveedor responde en máx. 24 horas</div>
+          <div class="step-desc">Ver sección 9.8 No conformidades para los tiempos de respuesta completos, proceso de escalación y disposición final del material.</div>
+        </div>
+      </div>
+    </div>
+    <div class="warn">⚠️ Consulta la sección 9.8 No conformidades para el proceso completo de atención y tiempos de respuesta.</div>
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+  </div>
+
+</div>
+
+<script>
+function st(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

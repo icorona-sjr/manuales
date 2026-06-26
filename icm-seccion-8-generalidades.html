@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8. Generalidades — ICM</title>
+<style>
+  :root {
+    --naranja: #D85A20;
+    --naranja-suave: #FDF0EA;
+    --naranja-borde: #F5C4A0;
+    --gris-oscuro: #2C2C2A;
+    --gris-medio: #5F5E5A;
+    --gris-suave: #F1EFE8;
+    --gris-borde: #D3D1C7;
+    --verde: #3B6D11;
+    --verde-suave: #EAF3DE;
+    --verde-borde: #C0DD97;
+    --rojo: #A32D2D;
+    --rojo-suave: #FCEBEB;
+    --rojo-borde: #F7C1C1;
+    --amarillo: #854F0B;
+    --amarillo-suave: #FAEEDA;
+    --amarillo-borde: #FAC775;
+    --azul: #185FA5;
+    --azul-suave: #E6F1FB;
+    --azul-borde: #85B7EB;
+    --morado: #3C3489;
+    --morado-suave: #EEEDFE;
+    --morado-borde: #AFA9EC;
+    --radius: 8px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #fff; color: var(--gris-oscuro); line-height: 1.6; }
+
+  .header-bar { background: var(--naranja); padding: 0 32px; display: flex; align-items: center; gap: 16px; height: 56px; }
+  .header-bar .codigo { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-bar .titulo { font-size: 15px; font-weight: 600; color: #fff; }
+  .header-bar .sep { color: rgba(255,255,255,0.4); }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  .proc-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--gris-borde); }
+  .proc-icono { width: 52px; height: 52px; border-radius: 12px; background: var(--naranja-suave); border: 1px solid var(--naranja-borde); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; }
+  .proc-titulo { font-size: 22px; font-weight: 700; color: var(--gris-oscuro); margin-bottom: 4px; }
+  .proc-sub { font-size: 14px; color: var(--gris-medio); }
+  .proc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--gris-suave); border: 1px solid var(--gris-borde); color: var(--gris-medio); }
+
+  .section { margin-bottom: 28px; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--naranja); margin-bottom: 10px; }
+  .divider { height: 1px; background: var(--gris-borde); margin: 28px 0; }
+
+  .info-card { background: var(--azul-suave); border: 1px solid var(--azul-borde); border-radius: var(--radius); padding: 14px 16px; color: var(--azul); font-size: 14px; line-height: 1.65; margin-bottom: 10px; }
+  .warn-card { background: var(--amarillo-suave); border: 1px solid var(--amarillo-borde); border-radius: var(--radius); padding: 12px 14px; color: var(--amarillo); font-size: 13px; line-height: 1.6; margin-top: 10px; }
+
+  /* Tabs de tipo de proveedor */
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tab { font-size: 13px; padding: 7px 16px; border-radius: 20px; border: 1px solid var(--gris-borde); background: var(--gris-suave); color: var(--gris-medio); cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+  .tab:hover { border-color: var(--naranja); color: var(--naranja); }
+  .tab.active { background: var(--naranja); border-color: var(--naranja); color: #fff; font-weight: 600; }
+  .panel-content { display: none; }
+  .panel-content.active { display: block; }
+
+  /* Documentos requeridos */
+  .docs-list { display: flex; flex-direction: column; gap: 8px; }
+  .doc-item { display: flex; align-items: flex-start; gap: 12px; background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 13px 14px; }
+  .doc-num { width: 26px; height: 26px; border-radius: 50%; background: var(--naranja); color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .doc-nombre { font-size: 14px; font-weight: 600; color: var(--gris-oscuro); }
+  .doc-detalle { font-size: 13px; color: var(--gris-medio); margin-top: 2px; line-height: 1.45; }
+  .doc-excluido { text-decoration: line-through; opacity: 0.5; }
+  .tag-excluido { font-size: 11px; font-weight: 600; background: var(--rojo-suave); color: var(--rojo); border: 1px solid var(--rojo-borde); border-radius: 20px; padding: 2px 8px; margin-left: 8px; }
+  .tag-unico { font-size: 11px; font-weight: 600; background: var(--morado-suave); color: var(--morado); border: 1px solid var(--morado-borde); border-radius: 20px; padding: 2px 8px; margin-left: 8px; }
+
+  /* Proceso de difusión */
+  .pasos { display: flex; flex-direction: column; }
+  .paso { display: flex; gap: 16px; }
+  .paso-left { display: flex; flex-direction: column; align-items: center; }
+  .paso-num { width: 30px; height: 30px; border-radius: 50%; background: var(--naranja-suave); border: 2px solid var(--naranja); color: var(--naranja); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .paso-line { width: 2px; flex: 1; background: var(--gris-borde); margin: 4px 0; min-height: 12px; }
+  .paso:last-child .paso-line { display: none; }
+  .paso-body { padding-bottom: 18px; flex: 1; padding-top: 4px; }
+  .paso-titulo { font-size: 15px; font-weight: 600; color: var(--gris-oscuro); margin-bottom: 3px; }
+  .paso-desc { font-size: 14px; color: var(--gris-medio); line-height: 1.6; }
+
+  /* Canales de difusión */
+  .canales { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .canal-card { background: var(--gris-suave); border: 1px solid var(--gris-borde); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
+  .canal-icono { font-size: 22px; margin-bottom: 8px; }
+  .canal-nombre { font-size: 13px; font-weight: 600; color: var(--gris-oscuro); }
+  .canal-desc { font-size: 12px; color: var(--gris-medio); margin-top: 4px; }
+
+  /* Nota importante */
+  .nota-importante { background: var(--naranja-suave); border: 1px solid var(--naranja-borde); border-left: 4px solid var(--naranja); border-radius: var(--radius); padding: 14px 16px; }
+  .nota-titulo { font-size: 13px; font-weight: 700; color: var(--naranja); margin-bottom: 6px; }
+  .nota-texto { font-size: 13px; color: var(--gris-medio); line-height: 1.6; }
+
+  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--gris-medio); }
+
+  @media (max-width: 600px) {
+    .canales { grid-template-columns: 1fr; }
+    .proc-icono { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <span class="codigo">MCM-01-G</span>
+  <span class="sep">›</span>
+  <span class="titulo">8. Generalidades</span>
+</div>
+
+<div class="container">
+
+  <div class="proc-header">
+    <div class="proc-icono">📋</div>
+    <div>
+      <div class="proc-titulo">8. Generalidades</div>
+      <div class="proc-sub">Documentos requeridos por tipo de proveedor y proceso de difusión</div>
+      <div class="proc-meta">
+        <span class="badge">Alineado a AIAG</span>
+        <span class="badge">Compras / Calidad</span>
+        <span class="badge">Renovación anual</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="info-card">Este manual está alineado a los requerimientos establecidos en los manuales de AIAG. Todos los proveedores están sujetos a su cumplimiento. Cualquier diferencia con otro documento deberá estar aprobada por escrito por ICM.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Documentos requeridos al inicio y anualmente — selecciona tu tipo</div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('resinas', this)">Proveedor de resinas</button>
+      <button class="tab" onclick="switchTab('empaque', this)">Material de empaque</button>
+      <button class="tab" onclick="switchTab('calibracion', this)">Calibración / sorteo</button>
+      <button class="tab" onclick="switchTab('moldes', this)">Fabricación de moldes</button>
+    </div>
+
+    <!-- RESINAS -->
+    <div id="tab-resinas" class="panel-content active">
+      <div class="docs-list">
+        <div class="doc-item">
+          <div class="doc-num">1</div>
+          <div>
+            <div class="doc-nombre">Certificado de calidad vigente <span style="font-weight:400;color:var(--gris-medio)">ISO 9001 / IATF 16949</span></div>
+            <div class="doc-detalle">Fabricante: IATF 16949 o ISO 9001. Distribuidor: ISO 9001 o plan de implementación.</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-num">2</div>
+          <div>
+            <div class="doc-nombre">Auto-evaluación FPCM-01-01 (Anexo 01)</div>
+            <div class="doc-detalle">Enviada por ICM entre enero y febrero. Incluir evidencias y planes de acción si aplica. Plazo: 25 días hábiles tras recibir resultados.</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-num">3</div>
+          <div>
+            <div class="doc-nombre">PPAP Nivel 1 por material vendido</div>
+            <div class="doc-detalle">Incluye prueba de flamabilidad para resinas que apliquen. Carpeta electrónica conforme al Apéndice F del manual PPAP AIAG.</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-num">4</div>
+          <div>
+            <div class="doc-nombre">Información requerida en el manual</div>
+            <div class="doc-detalle">Datos de contacto actualizados, información de escalación y cualquier otro dato solicitado por ICM.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPAQUE -->
+    <div id="tab-empaque" class="panel-content">
+      <div class="docs-list">
+        <div class="doc-item" style="opacity:0.5; background: #fafaf8;">
+          <div class="doc-num" style="background:var(--gris-medio);">1</div>
+          <div>
+            <div class="doc-nombre doc-excluido">Certificado de calidad vigente <span class="tag-excluido">No aplica</span></div>
+            <div class="doc-detalle">Excluido para proveedores de material de empaque.</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-num">2</div>
+          <div>
+            <div class="doc-nombre">Auto-evaluación FPCM-01-01 (Anexo 01)</div>
+            <div class="doc-detalle">Enviada por ICM entre enero y febrero. Incluir evidencias y planes de acción si aplica.</div>
+          </div>
+        </div>
+        <div class="doc-item" style="opacity:0.5; background: #fafaf8;">
+          <div class="doc-num" style="background:var(--gris-medio);">3</div>
+          <div>
+            <div class="doc-nombre doc-excluido">PPAP Nivel 1 <span class="tag-excluido">No aplica</span></div>
+            <div class="doc-detalle">Excluido para material de empaque.</div>
+          </div>
+        </div>
+        <div class="doc-item" style="opacity:0.5; background: #fafaf8;">
+          <div class="doc-num" style="background:var(--gris-medio);">4</div>
+          <div>
+            <div class="doc-nombre doc-excluido">Información adicional del manual <span class="tag-excluido">No aplica</span></div>
+            <div class="doc-detalle">Excluido para material de empaque.</div>
+          </div>
+        </div>
+      </div>
+      <div class="warn-card">Solo se requiere el inciso 2 (Auto-evaluación). Los incisos 1, 3 y 4 no aplican para este tipo de proveedor.</div>
+    </div>
+
+    <!-- CALIBRACIÓN -->
+    <div id="tab-calibracion" class="panel-content">
+      <div class="docs-list">
+        <div class="doc-item">
+          <div class="doc-num" style="background:var(--morado);">★</div>
+          <div>
+            <div class="doc-nombre">Acreditación ISO 17025 vigente <span class="tag-unico">Requisito único</span></div>
+            <div class="doc-detalle">Por un organismo de acreditación del ILAC – EMA o su equivalente nacional. Los certificados de calibración deben incluir la marca del organismo nacional de certificación.</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-num">+</div>
+          <div>
+            <div class="doc-nombre">Alta de proveedor FPCM-01-09</div>
+            <div class="doc-detalle">Enviar al área de Metrología junto con los certificados de calibración.</div>
+          </div>
+        </div>
+      </div>
+      <div class="warn-card">
+        ⚠️ <strong>Obligatorio notificar a ICM en los primeros 10 días hábiles</strong> si el registro de certificado es suspendido. Los certificados deben estar libres de tachaduras o enmendaduras que afecten su legibilidad.
+      </div>
+    </div>
+
+    <!-- MOLDES -->
+    <div id="tab-moldes" class="panel-content">
+      <div class="docs-list">
+        <div class="doc-item">
+          <div class="doc-num" style="background:var(--morado);">★</div>
+          <div>
+            <div class="doc-nombre">Acreditación ISO 9001 vigente <span class="tag-unico">Requisito único</span></div>
+            <div class="doc-detalle">Requisito mínimo para ser seleccionado como proveedor de fabricación de molde.</div>
+          </div>
+        </div>
+        <div class="doc-item">
+          <div class="doc-num">+</div>
+          <div>
+            <div class="doc-nombre">Auto-evaluación FPCM-01-01</div>
+            <div class="doc-detalle">Requerida para el alta de nuevo proveedor.</div>
+          </div>
+        </div>
+      </div>
+      <div class="warn-card">
+        La evaluación se realiza mediante el formato FPCM-01-14 Evaluación Proveedores de Servicios Específicos. Responsable: Gerencia Técnica e Ingeniero de Proyectos.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">¿Sin certificación de calidad?</div>
+    <div class="nota-importante">
+      <div class="nota-titulo">Excepción — aprobación especial requerida</div>
+      <div class="nota-texto">El proveedor podrá suministrar materiales únicamente bajo aprobación escrita de la Dirección General o Gerencia de Planta ICM, en conjunto con la Jefatura de Calidad y el Jefe de Ingeniería.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-label">Cómo se difunde este manual</div>
+    <div class="canales">
+      <div class="canal-card">
+        <div class="canal-icono">✉️</div>
+        <div class="canal-nombre">Correo electrónico</div>
+        <div class="canal-desc">Canal principal de envío</div>
+      </div>
+      <div class="canal-card">
+        <div class="canal-icono">🏢</div>
+        <div class="canal-nombre">Visita a ICM</div>
+        <div class="canal-desc">Entrega presencial</div>
+      </div>
+      <div class="canal-card">
+        <div class="canal-icono">💻</div>
+        <div class="canal-nombre">Videoconferencia</div>
+        <div class="canal-desc">Presentación y aclaración</div>
+      </div>
+    </div>
+
+    <div class="section" style="margin-top: 20px; margin-bottom: 0;">
+      <div class="section-label">Confirmación de recibido del proveedor</div>
+      <div class="pasos">
+        <div class="paso">
+          <div class="paso-left"><div class="paso-num">1</div><div class="paso-line"></div></div>
+          <div class="paso-body">
+            <div class="paso-titulo">ICM envía el manual al proveedor</div>
+            <div class="paso-desc">Por correo, visita o videoconferencia según sea el caso.</div>
+          </div>
+        </div>
+        <div class="paso">
+          <div class="paso-left"><div class="paso-num">2</div><div class="paso-line"></div></div>
+          <div class="paso-body">
+            <div class="paso-titulo">Proveedor confirma recibido</div>
+            <div class="paso-desc">Mediante: confirmación de correo, minuta firmada o acuse de recibido.</div>
+          </div>
+        </div>
+        <div class="paso">
+          <div class="paso-left"><div class="paso-num">3</div></div>
+          <div class="paso-body">
+            <div class="paso-titulo">Si el proveedor no puede confirmar por políticas internas</div>
+            <div class="paso-desc">Deberá enviar una carta en hoja membretada donde estipule que cumplirá con los lineamientos del manual.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Industrial Corona de México S.A. de C.V. — Sistema de Gestión Integral</span>
+    <span>MCM-01-G Rev. 12 · Jun 2026</span>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id, el) {
+  document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
